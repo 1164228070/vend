@@ -1,0 +1,58 @@
+package com.haiyi.pay;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+
+public class PayConfig {
+    
+    /**
+     * 交易密钥
+     */
+    public static String key ;
+    public static String mchPrivateKey;
+    public static String platPublicKey;
+    /**
+     * 商户号
+     */
+    public static String mch_id;
+    
+    /**
+     * 请求url
+     */
+    public static String req_url;
+    
+    /**
+     * 通知url
+     */
+    public static String notify_url;
+
+    /**
+     * appId
+     */
+    public static String appId;
+
+    /**
+     * appSecret
+     */
+    public static String appSecret;
+
+    static{
+        Properties prop = new Properties();
+        InputStream in = PayConfig.class.getResourceAsStream("/properties/pay.properties");
+        try {
+            prop.load(in);
+            key = prop.getProperty("key").trim();
+            mchPrivateKey = prop.getProperty("mchPrivateKey").trim();
+            platPublicKey = prop.getProperty("platPublicKey").trim();
+            mch_id = prop.getProperty("mch_id").trim();
+            req_url = prop.getProperty("req_url").trim();
+            notify_url = prop.getProperty("notify_url").trim();
+            appId = prop.getProperty("appId").trim();
+            appSecret = prop.getProperty("appSecret").trim();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

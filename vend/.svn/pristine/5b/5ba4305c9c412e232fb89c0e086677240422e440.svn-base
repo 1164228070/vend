@@ -1,0 +1,42 @@
+package com.haiyi.query;
+import com.haiyi.query.base.BaseQuery;
+public class ProductQuery extends BaseQuery{
+	
+	private Integer productGroupId;
+	private Integer agentId;
+	private Byte status;
+
+	public Integer getProductGroupId() {
+		return productGroupId;
+	}
+
+	public void setProductGroupId(Integer productGroupId) {
+		this.productGroupId = productGroupId;
+	}
+	
+	public Integer getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(Integer agentId) {
+		this.agentId = agentId;
+	}
+	
+
+	public Byte getStatus() {
+		return status;
+	}
+
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
+
+	@Override
+	public String getOrder() {
+		return null;
+	}
+
+	@Override
+	public void addQuery(String condition, Object... param) {
+	}
+}

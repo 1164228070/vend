@@ -1,0 +1,24 @@
+package com.haiyi.dao;
+
+import com.haiyi.dao.base.BaseDao;
+import com.haiyi.domain.Dev;
+import com.haiyi.domain.ProductGroup;
+import com.haiyi.query.DevQuery;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
+public interface DevMapper extends BaseDao<Dev,DevQuery> {
+	
+     Dev devLoginInfo(@Param("agentId") Integer agentId,@Param("status") Byte status);
+     
+     Dev devLoginInfoByObtain(@Param("agentId") Integer agentId,@Param("obtain") Integer obtain);
+     
+     List<Dev> selectDevNum();
+
+	 Map<String,Object> getPayInfo(Integer productId);
+
+	Dev findByNumAndToken(@Param("num") String num,@Param("token")String token);
+
+	int productCount(@Param("id") Integer id);
+}

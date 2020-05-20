@@ -1,0 +1,35 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+        <!-- 基础库 -->  
+	    <%@ include file="/WEB-INF/jsp/common/common.jspf" %>
+	    
+		<style>
+		    textarea, input[type] {border: 1px solid #e5e5e5; display: block;width: 100%;padding: 10px;}
+		    textarea { height: 150px;}
+		</style>
+	    
+		<title>设置</title>
+	</head>
+	<body>
+	  
+		<form action="${pageContext.request.contextPath}/opinions" method="POST">
+		    <div class="container mtb20">
+		        <textarea name="content" placeholder="您的宝贵意见，将是我们成长的动力"></textarea>
+		    </div>
+		
+		    <div class="container">
+		        <input type="text" name="linkPhone" placeholder="输入您的手机号，方便我们联系您">
+		    </div>
+		
+		    <div class="container mt30">
+		        <input type="submit" value="提交" class="btn btn-block btn-primary btn-lg">
+		    </div>
+		</form>  
+	    
+		<a href="javascript:;" class="go-back J-go-back"></a>
+		<!-- 公共js -->
+	    <%@ include file="/WEB-INF/jsp/common/basic.jspf" %>
+	</body>
+</html>

@@ -1,0 +1,20 @@
+package com.haiyi.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+@RequestMapping("/devs")
+public class DevController {
+	
+	private String LIST_UI="products/list";
+	
+	@RequestMapping(value = "/{devNum}",method=RequestMethod.GET)
+	public String index(ModelMap modelMap,@PathVariable String devNum){
+		modelMap.addAttribute("devNum", devNum);
+		return LIST_UI;
+	}
+}

@@ -1,0 +1,129 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="form"  uri="http://www.springframework.org/tags/form" %>  
+<!DOCTYPE html>
+<html>
+	<head>
+        <!-- 基础库 -->
+	    <%@ include file="/WEB-INF/jsp/common/common.jspf" %>
+		<title>订单记录</title>
+	</head>
+	<body>
+		<div>
+		    <div id="order-tab" class="panel">
+		        <nav class="mod-box tap-panel tab-panel-primary">
+		            <a data-type="" class="box-flex tap-meun tap-meun-on" href="javascript:;">全部</a>
+		            <a data-type="01" class="box-flex tap-meun" href="javascript:;">待付款</a>
+		            <a data-type="00" class="box-flex tap-meun" href="javascript:;">已付款</a>
+		            <a data-type="02" class="box-flex tap-meun" href="javascript:;">无效</a>
+		        </nav>
+		    </div>
+		    
+ 			<div id="wrapper" style="top:40px;bottom:0px;">
+				<div id="scroller">
+					<div class="pullDown" style="display: none;">
+						<span class="pullDownIcon">&nbsp;</span>
+						<span class="pullDownLabel">下拉刷新...</span>
+					</div>
+					<div class="list"></div>
+					<div class="pullUp" style="display: none;">
+						<span class="pullUpIcon">&nbsp;</span>    
+						<span class="pullUpLabel">上拉加载...</span>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	    
+		<!-- 公共js -->
+	    <%@ include file="/WEB-INF/jsp/common/basic.jspf" %>
+	    
+	    <!-- 引用loadMore -->
+	    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/plugins/iscroll/iscroll-probe.js"></script> 
+	    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/plugins/iscroll/LoadMore.js"></script> 
+		
+	    <script src="${pageContext.request.contextPath}/static/js/cache.js"></script>  
+	    
+		<script type="text/javascript">
+	        function callback(refresh,init,nextPage,param,call){
+	        	console.log(param);
+	    	    if(refresh || init || nextPage){
+	    	    	
+	    	    	param = param || {};
+	    	    	param.pageStart = nextPage||1;
+	    	    	//加载
+	    	    	var devId = $(".list").data("dev");
+			        request.ajax(common.JSONPContextPath+'/orders','GET',param,false,function(result){
+		        		var total = 0;
+		        		if(result.success){
+		        			var data = result.data;
+		        		    total = data.length;    //返回的总记录数
+		        		    var dataView = $("div.list");  
+		        		    var content="";
+		        			$.each(data,function(key,value){
+		                    	content += '<div class="panel product" data-id="'+value.id+'">'+ 
+				                	'<div class="panel-hd clearfix">'+
+				                		'<span class="orange pull-right">'+cache.getName(2,value.payStatus)+'</span>'+
+				                	'</div>'+                     
+				                	'<a class="block" href="'+common.contextPath+'/comsumes/'+value.orderId+'">'+  
+				                	    '<div class="container panel-item clearfix">'+
+				                	    	'<img class="pull-left mr10" width="60" height="60" src="http://localhost:8080/wapApp/static/images/logo.png"/>'+
+				                	    	'<h3>'+value.agentId+'</h3>'+  
+				                	    	'<p><ins class="pull-right">x1</ins><span class="emb-red mr5">&yen;<i class="f18">'+value.payAmount+'</i></span></p>'+
+				                	    '</div>'+
+				                	'</a>'+
+				                	'<div class="panel-bd text-right">'+
+					                	'<p class="lightgray">'+
+						                	'<time class="pull-left">'+util.formatDateTime(value.createDate)+'</time>'+  
+						                	'共计：<span class="orange">&yen;'+value.payAmount+'</span>'+
+					                	'</p>'+     
+						                '<div class="mt5">'+
+							                '<a id="cancel-task" class="J-cancel-order btn btn-primary mr5" data-task="'+value.orderNum+'" href="javascript:;">取消订单</a>'+
+						                '</div>'+
+					                '</div>'+    
+				                '</div>';
+		        			});
+		        			if(init){
+		        				dataView.empty();
+		        			}
+		        			$(content).appendTo(dataView);  
+		        		}else{
+		        			$.tip.alert(2, result.msg, 2000);
+		        		}
+		        		if(call){
+		        			call(result.success,total);
+		        		}
+		        	});
+	    	    }
+	        }
+		      
+	        $(function(){
+	        	var loadMore = new LoadMore({"callback":callback,'offset':80});
+	        	
+		       	var height = $("#scroller").height();
+	        	var pageSize = Math.floor(height/212)+1;
+	        	
+	        	loadMore.param({"pageSize":pageSize});
+	        	loadMore.load_content();
+	        	
+		       	//监听事件
+		       	$("#order-tab nav a").on('click',function(e){
+		       		e.preventDefault();
+					var $it = $(this); 
+					if ($it.hasClass('tap-meun-on')) return;
+					
+					$it.addClass('tap-meun-on').siblings().removeClass('tap-meun-on');
+					$("#order-list").empty();  
+					var type = $it.data('type');     
+        	        loadMore.loading();
+					if(type){
+	        	        loadMore.load_content('refresh',false,{"pageSize":pageSize,"payStatus":type});
+					}else{
+	        	        loadMore.load_content('refresh',false,{"pageSize":pageSize});
+					}
+		       	});
+	        });
+		</script>
+	</body>
+</html>

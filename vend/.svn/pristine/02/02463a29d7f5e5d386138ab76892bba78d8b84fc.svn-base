@@ -1,0 +1,72 @@
+package com.haiyi.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.haiyi.controller.base.BaseController;
+import com.haiyi.domain.Agent;
+import com.haiyi.domain.Dev;
+import com.haiyi.domain.ProductGroup;
+import com.haiyi.query.DevQuery;
+import com.haiyi.query.ProductGroupQuery;
+import com.haiyi.service.AgentService;
+import com.haiyi.service.DevService;
+import com.haiyi.service.ProductGroupService;
+import com.haiyi.utils.AgentUtil;
+import com.haiyi.utils.RequestUtil;
+import com.maizi.anno.ControllerAnno;
+import com.maizi.exception.KPException;
+import com.maizi.utils.StringUtil;
+
+@Controller
+@RequestMapping("/productGroups")
+@ControllerAnno(addUI = "/productGroups/save", detailUI = "/productGroups/detail", editUI = "/productGroups/save", listUI = "/productGroups/list")
+public class ProductGroupController extends BaseController<ProductGroup,ProductGroupQuery>{
+	
+	@Autowired
+	AgentService agentService;
+	@Autowired
+	DevService devService;
+	
+	@Autowired
+	public void setProductGroupService(ProductGroupService productGroupService) {
+		this.baseService = productGroupService;
+	}
+	
+	@Override
+	public Map<String, Object> list(ProductGroupQuery e, HttpServletRequest request) throws KPException {
+		Agent agent = new Agent();
+		agent.setId(AgentUtil.getAgentId(request.getSession()));
+		e.setAgent(agent);
+		return super.list(e, request);
+	}
+
+	@Override
+	public ProductGroup beforeSave(ModelMap modelMap, ProductGroup t) throws KPException {
+		Agent agent = new Agent();
+		agent.setId(AgentUtil.getAgentId(RequestUtil.getRequest().getSession()));
+		t.setAgent(agent);
+		return t;
+	}
+
+	@Override
+	public void beforeSaveUI(ModelMap modelMap, String id) throws KPException {
+		//列出属于当前代理的设备
+		DevQuery devQuery = new DevQuery();
+		devQuery.setAgentId(AgentUtil.getAgentId(RequestUtil.getRequest().getSession()));
+		devQuery.setPagination(false);
+		List<Dev> devs = devService.findBySelective(devQuery).getList();
+		modelMap.addAttribute("devs", devs);
+	}
+
+	@Override
+	protected void beforeDelete(String[] ids) throws KPException {
+	}
+}

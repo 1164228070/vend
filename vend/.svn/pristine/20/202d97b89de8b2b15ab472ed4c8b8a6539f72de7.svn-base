@@ -1,0 +1,160 @@
+package com.haiyi.controller;
+
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.haiyi.domain.Member;
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.service.MemberService;
+import com.haiyi.utils.SessionUtil;
+import com.haiyi.utils.StatusConstant;
+import com.maizi.anno.AuthAnno;
+import com.maizi.exception.ExceptionKind;
+import com.maizi.exception.KPException;
+import com.maizi.utils.JsonModel;
+import com.maizi.utils.RegexUtil;
+import com.maizi.utils.StringUtil;
+
+/**
+ * 
+ * @ClassName: MemberController
+ * @Company: 麦子科技
+ * @Description: 会员控制器
+ * @author 技术部-刘强峰
+ * @date 2016年4月19日下午11:50:08
+ *
+*/
+@Controller
+@RequestMapping("/members")
+public class MemberController {
+	
+	@Autowired
+	MemberService memberService;
+	@Autowired
+	ComsumeLogService comsumeLogService;
+	
+	/**
+	 * 编辑密码
+	 * @param passwordOld
+	 * @param passwordNew
+	 * @return
+	 */   
+	@RequestMapping(value="/password",method=RequestMethod.PUT)
+	@AuthAnno
+	public @ResponseBody JsonModel updatePassword(@RequestParam String passwordOld, @RequestParam String passwordNew, HttpSession session){
+		JsonModel jsonModel = new JsonModel();
+		//判断密码参数合法性
+		if(StringUtil.isEmpty(passwordOld)){
+			jsonModel.setMsg("旧密码不能为空!");
+			return jsonModel;
+		}else if(!RegexUtil.password(passwordOld)){
+			jsonModel.setMsg("密码由[a-zA-Z0-9_.]组成的6到10位!");
+			return jsonModel;
+		}
+		
+		if(StringUtil.isEmpty(passwordNew)){
+			jsonModel.setMsg("新密码不能为空!");
+			return jsonModel;
+		}else if(!RegexUtil.password(passwordNew)){
+			jsonModel.setMsg("密码由[a-zA-Z0-9_.]组成的6到10位!");
+			return jsonModel;
+		}
+		
+		if(passwordOld.equals(passwordNew)){
+			jsonModel.setSuccess(false);
+			jsonModel.setMsg("新密码不能和旧密码相同!");
+			return jsonModel;
+		}
+		
+		Member member =  memberService.login(((Member) SessionUtil.getCurrentLoginInfo(session)).getLoginName(),passwordOld);
+		if(member==null){
+			jsonModel.setSuccess(false);
+			jsonModel.setMsg("旧密码错误!");
+			return jsonModel;
+		}
+	    memberService.updatePassword(passwordNew,member.getId());
+	    jsonModel.setSuccess(true);      
+	    jsonModel.setMsg("密码修改成功!");
+		return jsonModel;
+	}
+	 
+	/**
+	 * 登录
+	 * @param modelMap
+	 * @param loginName
+	 * @param password
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value="/session/new",method=RequestMethod.POST,headers="X-Requested-With=XMLHttpRequest")
+	public @ResponseBody JsonModel login(ModelMap modelMap,@RequestParam String loginName,@RequestParam String password,HttpSession session){
+		JsonModel jsonModel = new JsonModel();
+		jsonModel.setSuccess(false);
+		if(StringUtil.isEmpty(loginName)){
+			jsonModel.setMsg("名称不能为空");
+			return jsonModel;
+		}
+		if(StringUtil.isEmpty(password)){
+			jsonModel.setMsg("密码不能为空");
+			return jsonModel;
+		}else if(!RegexUtil.password(password)){
+			jsonModel.setMsg("密码由[a-zA-Z0-9_.]组成的6到10位!");
+			return jsonModel;
+		}
+		
+		Member member = memberService.login(loginName,password);
+		if(member==null){
+			jsonModel.setMsg("名称或密码不正确");
+			return jsonModel;
+		}
+		
+		if(member.getStatus()==StatusConstant.MEMBER_STATUS_DEACTIVATE){
+			jsonModel.setMsg("该用户已被冻结");
+			return jsonModel;
+		}  
+		jsonModel.setSuccess(true);
+	    jsonModel.setData(member.getId());
+	    SessionUtil.saveCurrentLoginInfo(session,member);
+	    return jsonModel;
+	}
+	
+	/**
+	 * 获取会员信息
+	 * @param modelMap
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value="",method=RequestMethod.GET,headers="X-Requested-With=XMLHttpRequest")
+	@AuthAnno
+	public @ResponseBody JsonModel info(ModelMap modelMap,HttpSession session){
+		JsonModel jsonModel = new JsonModel();
+		jsonModel.setSuccess(false);
+		Integer memberId = SessionUtil.getCurrentLoginInfoId(session);
+		Member member = memberService.findById(memberId+"");
+		if(member==null){
+			jsonModel.setMsg("不存在该用户");
+			return jsonModel;
+		}
+		
+		if(member.getStatus()==StatusConstant.MEMBER_STATUS_DEACTIVATE){
+			jsonModel.setMsg("该用户已被冻结");
+			return jsonModel;
+		}  
+		jsonModel.setSuccess(true);
+		member.setPassword(null);
+		jsonModel.setData(member);
+		jsonModel.setMsg("成功获取个人信息");
+		return jsonModel;
+	}
+ }

@@ -1,0 +1,6 @@
+package com.haiyi.dao;
+import com.haiyi.dao.base.BaseDao;
+import com.haiyi.domain.ProductLog;
+import com.haiyi.query.ProductLogQuery;
+public interface ProductLogMapper extends BaseDao<ProductLog,ProductLogQuery> {
+}

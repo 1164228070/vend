@@ -1,0 +1,43 @@
+package com.haiyi.task;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.haiyi.domain.ComsumeLog;
+import com.haiyi.query.ComsumeLogQuery;
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.utils.StatusConstant;
+import com.maizi.exception.KPException;
+import com.maizi.utils.LogUtils;
+
+/**
+ * 处理订单无效定时任务
+ * @author Administrator
+ *
+ */
+public class InvalidOrderStatusScanTask {
+	
+	@Autowired
+	ComsumeLogService comsumeLogService;
+	 
+	public void scanOrder() throws KPException{
+		LogUtils.logInfo("定时任务处理无效订单开始");
+		
+		ComsumeLogQuery comsumeLogQuery = new ComsumeLogQuery();
+		comsumeLogQuery.setPayStatus(StatusConstant.PAY_STATUS_PAYING);
+		comsumeLogQuery.setPagination(false);
+		 
+		List<ComsumeLog> sendedComsumeLogs = comsumeLogService.findBySelective(comsumeLogQuery).getList();
+		for(ComsumeLog comsumeLog : sendedComsumeLogs){
+			//比较时间
+			Date createDate = comsumeLog.getCreateDate();
+			if(System.currentTimeMillis()-createDate.getTime()>=180000){//3分钟  3*60*1000
+				comsumeLogService.updateExceptionComsumeStatus(comsumeLog.getOrderId(),StatusConstant.PAY_STATUS_INVALID);
+				LogUtils.logInfo("无效订单[{}]",comsumeLog.getOrderId());
+			}
+		}
+		LogUtils.logInfo("定时任务处理无效订单结束");
+	}
+}

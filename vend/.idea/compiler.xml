@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="apiWeb" />
+        <module name="xwWeb" />
+        <module name="adminWeb" />
+        <module name="baseApiWeb" />
+        <module name="baseWXWeb" />
+        <module name="agentWeb" />
+        <module name="commom" />
+        <module name="daoSupport" />
+        <module name="wapApp" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="adminWeb" target="1.8" />
+      <module name="agentWeb" target="1.8" />
+      <module name="apiWeb" target="1.8" />
+      <module name="baseApiWeb" target="1.5" />
+      <module name="baseWXWeb" target="1.5" />
+      <module name="commom" target="1.8" />
+      <module name="daoSupport" target="1.8" />
+      <module name="publicPom" target="1.8" />
+      <module name="wapApp" target="1.8" />
+      <module name="xwWeb" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

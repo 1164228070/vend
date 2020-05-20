@@ -1,0 +1,62 @@
+@charset "UTF-8";
+/*************************************** 个人信息 start ***************************************/
+#user-info  #head-img{border-radius: 50%;}
+
+#user-info .certify { position: absolute; bottom: 5px; left: 70px; }
+
+.certify p:before{  
+    content: '';
+    width: 20px;
+    height: 20px;
+    margin-right : 5px;
+    display: inline-block;
+    vertical-align : middle;
+    background-repeat: no-repeat;
+    background-size: 20px,20px;
+}
+
+.certify p.yes:before{
+    background-image: url('../images/i-certify-yes.png');
+}
+.certify p.no:before{
+    background-image: url('../images/i-certify-no.png');
+}
+
+#user-info .list-fl li { position: relative; width: 65%; }
+#user-info .list-fl li a { display: block; padding: 5px; }
+#user-info .list-fl li:nth-child(1) { width: 35%; border-right: 1px solid #e5e5e5; }
+#user-info .list-fl li:nth-child(2) { padding-left: 10px; }
+
+#user-info  #headPicFile{
+	opacity: 0;position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+}
+/*************************************** 个人信息 end *****************************************/
+ 
+/* ************************************** 支付方式 start ************************************** */
+.pay-panel .pay-way { position: relative; padding: 5px 10px; border-top: 1px solid #e5e5e5; }
+.pay-panel .pay-way i { display: inline-block; vertical-align: middle; width: 65px; height: 40px; }
+.pay-panel .pay-weixin { background: url('../images/pay-wx.png') no-repeat 0 50%; background-size: 30px; }
+.pay-panel .pay-zfb { background: url('../images/pay-zfb.png') no-repeat 0 50%; background-size: 30px; }
+/* ************************************** 支付方式 end ************************************** */
+
+
+/*************************************** 我的卡包 start *****************************************/
+.cards .card{height: 100px;position:relative;}
+.cards .card .num{line-height: 78px;color: #ff6e3b;letter-spacing: 4px;}
+.cards .card p.disable{color: #999}
+.cards .card i{position: absolute;bottom: 5px;right: 10px;}
+/*************************************** 我的卡包 end  ******************************************/
+
+
+/*************************************** 我的票务 start *****************************************/
+.fortune-enter { border-top: 1px solid #e5e5e5; background-color: #fff; } 
+.fortune-enter .list-item { position: relative; width: 33.3333%; padding-top: 80px; padding-bottom: 30px; text-align: center; border-bottom: 1px solid #e5e5e5; border-right: 1px solid #e5e5e5; }
+.fortune-enter .list-item:nth-of-type(3n+3) { border-right: 0; }
+.fortune-enter .list-item:before {background-image: url('../images/icon_collection.png');background-repeat: no-repeat;background-size: 40px; content: ''; position: absolute; bottom: 55px; left: 50%; -moz-transform:  translateX(-50%); -ms-transform:  translateX(-50%); -webkit-transform:  translateX(-50%); transform:  translateX(-50%); }
+   
+.year-ticket:before { width: 34px; height: 40px; background-position: 0 -289px; }
+ 
+.ticket:before { width: 38px; height: 40px; background-position: 0 -327px; }
+.door-ticket:before { width: 38px; height: 40px; background-position: 0 -476px; }
+
+/*************************************** 我的票务 end  ******************************************/

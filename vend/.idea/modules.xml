@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/CarWash.iml" filepath="$PROJECT_DIR$/.idea/CarWash.iml" />
+      <module fileurl="file://$PROJECT_DIR$/adminWeb/adminWeb.iml" filepath="$PROJECT_DIR$/adminWeb/adminWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/agentWeb/agentWeb.iml" filepath="$PROJECT_DIR$/agentWeb/agentWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apiWeb/apiWeb.iml" filepath="$PROJECT_DIR$/apiWeb/apiWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/baseApiWeb/baseApiWeb.iml" filepath="$PROJECT_DIR$/baseApiWeb/baseApiWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/baseWXWeb/baseWXWeb.iml" filepath="$PROJECT_DIR$/baseWXWeb/baseWXWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/commom/commom.iml" filepath="$PROJECT_DIR$/commom/commom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/daoSupport/daoSupport.iml" filepath="$PROJECT_DIR$/daoSupport/daoSupport.iml" />
+      <module fileurl="file://$PROJECT_DIR$/publicPom/publicPom.iml" filepath="$PROJECT_DIR$/publicPom/publicPom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wapApp/wapApp.iml" filepath="$PROJECT_DIR$/wapApp/wapApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wapApp/xwWeb.iml" filepath="$PROJECT_DIR$/wapApp/xwWeb.iml" />
+    </modules>
+  </component>
+</project>

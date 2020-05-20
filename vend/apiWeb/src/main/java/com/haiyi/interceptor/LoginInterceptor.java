@@ -1,0 +1,121 @@
+package com.haiyi.interceptor;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter.DEFAULT;
+
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import com.haiyi.domain.base.LoginInfo;
+import com.haiyi.utils.SessionUtil;
+import com.maizi.anno.AuthAnno;
+import com.maizi.utils.JsonModel;
+import com.maizi.utils.JsonUtil;
+ 
+/**
+ * @author Administrator
+ *
+ */
+public class LoginInterceptor extends HandlerInterceptorAdapter {
+	
+	private static final String LOGIN_URI="/members/session/new";
+	
+	//session超时
+	private int SESSION_INVALID=0;  
+	//重复登录
+	private int RE_LOGIN=1;
+	 
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,Object handler) throws Exception {
+
+		if(true){
+			return true;
+		}
+
+
+		if (handler instanceof HandlerMethod) {
+			HandlerMethod handlerMethod = (HandlerMethod) handler;
+	         Method method = handlerMethod.getMethod();
+	         AuthAnno authAnno = method.getAnnotation(AuthAnno.class);
+	         if (authAnno != null ) {
+	             boolean needLogin = authAnno.verifyLogin();
+	             if (needLogin) {
+	            	 //需要登录
+	            	 LoginInfo loginInfo =  SessionUtil.getCurrentLoginInfo(request.getSession());
+	            	 if(loginInfo!=null){
+	            		 String requestURI=request.getRequestURI();
+	            		 requestURI = requestURI.substring(request.getContextPath().length());
+	            		 if(requestURI.startsWith(LOGIN_URI)){
+	         				//已经登录
+	            			 Map<String, Object> result = new HashMap<String, Object>();  
+	            			 result.put("success",false); 
+	            			 result.put("msg","请勿重复登录");
+	            			 result.put("responseType",RE_LOGIN);
+	            			 
+	            			 response.setCharacterEncoding("utf-8");
+	            			 PrintWriter out = response.getWriter();
+	            			 out.print(JsonUtil.mapToJson(result));
+	            		 	return false;
+	            		 }
+	            		 return true;
+	            	 }else{
+	            		 //跳转到登录界面 或 返回 JSON提示数据
+	            		 if("XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))){
+	            		 	response.addHeader("sessionstatus", "timeOut");
+	            		 	Map<String, Object> result = new HashMap<String, Object>();  
+	            		 	result.put("success",false); 
+	            		 	result.put("msg","session过期");
+	            		 	result.put("responseType",SESSION_INVALID);
+	            		 	result.put("from",request.getHeader("referer"));
+	            		 	response.setCharacterEncoding("utf-8");
+	            		 	PrintWriter out = response.getWriter();
+	            		 	out.print(JsonUtil.mapToJson(result));
+	            		 }else{
+	            			 response.addHeader("sessionstatus", "timeOut");
+	            			 Map<String, Object> result = new HashMap<String, Object>();  
+	            			 result.put("success",false); 
+	            			 result.put("msg","session过期");
+	            			 result.put("responseType",SESSION_INVALID);
+	            			 result.put("from",request.getHeader("referer"));
+	            			 response.setCharacterEncoding("utf-8");
+	            			 PrintWriter out = response.getWriter();
+	            			 out.print(JsonUtil.mapToJson(result));
+	            		 }
+	            		 return false;
+	            	 }
+	             }
+	        	 return true ;
+	         }else{
+	        	 String requestURI=request.getRequestURI();
+        		 requestURI = requestURI.substring(request.getContextPath().length());
+        		 if(requestURI.startsWith(LOGIN_URI)){
+        			if(SessionUtil.getCurrentLoginInfo(request.getSession())!=null){
+        				//已经登录
+            			 Map<String, Object> result = new HashMap<String, Object>();  
+            			 result.put("success",false); 
+            			 result.put("msg","请勿重复登录");
+            			 result.put("responseType",RE_LOGIN);
+            			 
+            			 response.setCharacterEncoding("utf-8");
+            			 PrintWriter out = response.getWriter();
+            			 out.print(JsonUtil.mapToJson(result));
+        				return false;
+        			}
+        		 }
+        		 return true ;
+	         }
+		}else{
+			return true;
+		}
+	}
+    private void redirect(HttpServletResponse response,String URI) throws ServletException, IOException{
+		response.sendRedirect(URI);
+	}
+}

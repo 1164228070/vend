@@ -1,0 +1,10 @@
+package com.haiyi.dao;
+import com.haiyi.dao.base.BaseDao;
+import com.haiyi.domain.ComsumeDetail;
+import com.haiyi.query.ComsumeDetailQuery;
+import com.haiyi.domain.ComsumeDetail;
+import org.apache.ibatis.annotations.Param;
+
+public interface ComsumeDetailMapper extends BaseDao<ComsumeDetail,ComsumeDetailQuery> {
+    int updatefinish(@Param("orderId") String orderId, @Param("orderNum")Integer orderNum, @Param("count")int count);
+}

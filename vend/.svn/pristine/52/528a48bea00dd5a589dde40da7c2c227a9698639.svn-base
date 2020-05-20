@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.ProductLogMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.ProductLog" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="productNum" property="productNum" jdbcType="INTEGER" />
+      <result column="productId" property="productId" jdbcType="INTEGER" />
+      <result column="storeCount" property="storeCount" jdbcType="INTEGER" />
+      <result column="count" property="count" jdbcType="INTEGER" />
+      <result column="agentId" property="agentId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      name,
+      productNum,
+      productId,
+      storeCount,
+      count,
+      agentId
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from product_log where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.ProductLogQuery">
+      select <include refid="Base_Column_List" /> from product_log
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="keyWords != null and keyWords != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.keyWords + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+         <if test="agentId != null">
+            and agentId = #{agentId,jdbcType=INTEGER}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from product_log where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from product_log where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.ProductLog" >
+    insert into product_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        name,
+        productNum,
+        productId,
+        storeCount,
+        count,
+        agentId
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR},
+        #{productNum,jdbcType=INTEGER},
+        #{productId,jdbcType=INTEGER},
+        #{storeCount,jdbcType=INTEGER},
+        #{count,jdbcType=INTEGER},
+        #{agentId,jdbcType=INTEGER}
+    </trim>
+  </insert>
+</mapper>

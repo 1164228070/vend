@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/adminWeb" />
+    <file type="web" url="file://$PROJECT_DIR$/agentWeb" />
+    <file type="web" url="file://$PROJECT_DIR$/apiWeb" />
+    <file type="web" url="file://$PROJECT_DIR$/baseApiWeb" />
+    <file type="web" url="file://$PROJECT_DIR$/baseWXWeb" />
+    <file type="web" url="file://$PROJECT_DIR$/wapApp" />
+  </component>
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="ES6" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/wapApp/pom.xml" />
+        <option value="$PROJECT_DIR$/publicPom/pom.xml" />
+        <option value="$PROJECT_DIR$/daoSupport/pom.xml" />
+        <option value="$PROJECT_DIR$/commom/pom.xml" />
+        <option value="$PROJECT_DIR$/baseWXWeb/pom.xml" />
+        <option value="$PROJECT_DIR$/baseApiWeb/pom.xml" />
+        <option value="$PROJECT_DIR$/apiWeb/pom.xml" />
+        <option value="$PROJECT_DIR$/adminWeb/pom.xml" />
+        <option value="$PROJECT_DIR$/xwWeb/pom.xml" />
+        <option value="$PROJECT_DIR$/agentWeb/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_12" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
+</project>

@@ -1,0 +1,33 @@
+package com.haiyi.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.github.pagehelper.PageInfo;
+import com.haiyi.domain.ComsumeDetail;
+import com.haiyi.domain.ComsumeLog;
+import com.haiyi.query.ComsumeLogQuery;
+import com.maizi.exception.KPException;
+
+public interface ComsumeLogService{
+	PageInfo<ComsumeLog> findBySelective(ComsumeLogQuery e);
+	
+	ComsumeLog findByOrderId(String orderId);
+
+    List<ComsumeDetail> findOuttingOrderByDevNum(String devNum);
+    
+    //更新订单状态
+    int updateStatus(String orderId,Byte payStatus) throws KPException;
+
+	int update(ComsumeLog comsumeLog);
+
+    Map<String,Object> unifiedorder(String memberId, Integer[] referes,Integer[] counts,String devNum) throws KPException;
+
+    void updateExceptionComsumeStatus(String orderId,Byte payStatus);
+
+    List<Map<String,Object>> findUnOutputInfo(String orderId);
+
+
+    //----------------------------------支付回调-----------------------------------//
+    String nofificationWXPay(Map<String,String> notifyParam);
+}

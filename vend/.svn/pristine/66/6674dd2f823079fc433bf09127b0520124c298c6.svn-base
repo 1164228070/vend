@@ -1,0 +1,40 @@
+package com.haiyi.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.haiyi.controller.base.BaseController;
+import com.haiyi.domain.ProductLog;
+import com.haiyi.query.ProductLogQuery;
+import com.haiyi.service.ProductLogService;
+import com.maizi.anno.ControllerAnno;
+import com.maizi.exception.ExceptionKind;
+import com.maizi.exception.KPException;
+
+@Controller
+@RequestMapping("/productLogs")
+@ControllerAnno(addUI = "/productLogs/save", detailUI = "/productLogs/detail", editUI = "/productLogs/save", listUI = "/productLogs/list")
+public class ProductLogController extends BaseController<ProductLog,ProductLogQuery>{
+	
+	@Autowired
+	public void setProductLogService(ProductLogService productLogService) {
+		this.baseService = productLogService;
+	}
+	
+	@Override
+	public ProductLog beforeSave(ModelMap modelMap, ProductLog t) throws KPException {
+		throw new KPException(ExceptionKind.ACCESS_E);
+	}
+
+	@Override
+	public void beforeSaveUI(ModelMap modelMap, String id) throws KPException {
+		throw new KPException(ExceptionKind.ACCESS_E);
+	}
+
+	@Override
+	protected void beforeDelete(String[] ids) throws KPException {
+		throw new KPException(ExceptionKind.ACCESS_E);
+	}
+}

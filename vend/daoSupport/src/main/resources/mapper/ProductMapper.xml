@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.ProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.haiyi.domain.Product" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="productNum" property="productNum" jdbcType="INTEGER" />
+        <result column="cost" property="cost" jdbcType="DECIMAL" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="storeCount" property="storeCount" jdbcType="INTEGER" />
+        <result column="img" property="img" jdbcType="VARCHAR" />
+        <result column="productGroupId" property="productGroup.id" jdbcType="INTEGER" />
+        <result column="productGroupName" property="productGroup.name" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="userId" property="userId" jdbcType="INTEGER" />
+        <result column="userName" property="userName" jdbcType="VARCHAR" />
+        <result column="agentId" property="agentId" jdbcType="INTEGER" />
+        <result column="agentName" property="agentName" jdbcType="VARCHAR" />
+        <result column="orderNum" property="orderNum" jdbcType="INTEGER" />
+        <result column="threshold" property="threshold" jdbcType="INTEGER" />
+        <result column="countStatus" property="countStatus" jdbcType="INTEGER" />
+    </resultMap>
+
+    <resultMap id="DetailMap" type="com.haiyi.domain.vo.ProductVo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="productNum" property="productNum" jdbcType="INTEGER" />
+        <result column="cost" property="cost" jdbcType="DECIMAL" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="storeCount" property="storeCount" jdbcType="INTEGER" />
+        <result column="img" property="img" jdbcType="VARCHAR" />
+        <result column="productGroupId" property="productGroup.id" jdbcType="INTEGER" />
+        <result column="productGroupName" property="productGroup.name" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="userId" property="userId" jdbcType="INTEGER" />
+        <result column="userName" property="userName" jdbcType="VARCHAR" />
+        <result column="agentId" property="agentId" jdbcType="INTEGER" />
+        <result column="agentName" property="agentName" jdbcType="VARCHAR" />
+        <result column="orderNum" property="orderNum" jdbcType="INTEGER" />
+        <result column="threshold" property="threshold" jdbcType="INTEGER" />
+        <result column="countStatus" property="countStatus" jdbcType="INTEGER" />
+
+        <association property="productGroup" columnPrefix="g_" javaType="com.haiyi.domain.ProductGroup">
+            <id column="id" property="id" jdbcType="INTEGER" />
+            <result column="name" property="name" jdbcType="VARCHAR" />
+            <result column="num" property="num" jdbcType="VARCHAR" />
+        </association>
+
+        <association property="dev" columnPrefix="d_" javaType="com.haiyi.domain.Dev">
+            <id column="id" property="id" jdbcType="INTEGER" />
+            <result column="num" property="num" jdbcType="VARCHAR" />
+            <result column="name" property="name" jdbcType="VARCHAR" />
+            <result column="state" property="state" jdbcType="INTEGER" />
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+      id,
+      name,
+      productNum,
+      cost,
+      price,
+      storeCount,
+      img,
+      productGroupId,
+      productGroupName,
+      status,
+      userId,
+      userName,
+      agentId,
+      agentName,
+      orderNum,
+      threshold,
+      countStatus
+  </sql>
+
+    <!--根据Id查询-->
+    <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select <include refid="Base_Column_List" /> from product where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="findByProductGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select <include refid="Base_Column_List" /> from product where productGroupId = #{productGroupId,jdbcType=INTEGER}
+    </select>
+
+    <select id="findByIds" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from product where id in
+        <foreach item="item" index="index" collection="array"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="findByOrderNums" resultMap="BaseResultMap">
+        select p.* from product p,dev d,productgroup  g where p.productGroupId=g.id and d.id = g.devId and  d.num = #{devNum,jdbcType=INTEGER}  and  p.orderNum in
+        <foreach item="item" index="index" collection="orderStrNums"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--根据Id查询-->
+    <select id="findDetailById" resultMap="DetailMap" parameterType="java.lang.Integer" >
+      select p.*,g.id as g_id ,g.name as g_name,g.num as g_num,d.id as d_id,d.num as d_num,d.name as d_name,d.state as d_state from product p , productgroup g , dev d where p.productGroupId = g.id and g.devId = d.id and p.id = #{id,jdbcType=INTEGER}
+  </select>
+
+    <!-- 多条件查询 -->
+    <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.ProductQuery">
+        select <include refid="Base_Column_List" /> from product
+        <trim prefix="where" prefixOverrides="and |or ">
+            <if test="name != null and name != ''">
+                <bind name="likeName" value="'%' + _parameter.name + '%'" />
+                and name like #{likeName,jdbcType=VARCHAR}
+            </if>
+            <if test="userId != null and userId != ''">
+                and userId = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null and userName != ''">
+                and userName = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="agentId != null and agentId != ''">
+                and agentId = #{agentId,jdbcType=INTEGER}
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and agentName = #{agentName,jdbcType=VARCHAR}
+            </if>
+            <if test="productGroupId != null">
+                and productGroupId = #{productGroupId,jdbcType=INTEGER}
+            </if>
+            <if test="productGroupName != null">
+                and productGroupName = #{productGroupName,jdbcType=VARCHAR}
+            </if>
+            <if test="productNum != null">
+                and productNum = #{productNum,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="orderNum != null">
+                and orderNum = #{orderNum,jdbcType=INTEGER}
+            </if>
+            <if test="countStatus != null">
+                and countStatus = #{countStatus,jdbcType=INTEGER}
+            </if>
+        </trim>
+        order by id DESC
+    </select>
+
+    <!-- 查找数量 -->
+    <select id="count" resultType="int"  parameterType="java.util.Map">
+        select count(id) from product
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="agentId != null" >
+                and agentId = #{agentId,jdbcType=INTEGER}
+            </if>
+            <if test="status != null" >
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </select>
+
+
+    <!-- 删除 -->
+    <delete id="deleteById" parameterType="java.lang.String" >
+      delete from product where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <!-- 批量删除 -->
+    <delete id="deleteByIds" parameterType="java.lang.String">
+        delete from product where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--部分字段允许为空-->
+    <insert id="add" parameterType="com.haiyi.domain.Product" >
+        insert into product
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            name,
+            productNum,
+            cost,
+            price,
+            storeCount,
+            img,
+            productGroupId,
+            productGroupName,
+            status,
+            userId,
+            userName,
+            agentId,
+            agentName,
+            orderNum,
+            threshold,
+            <if test="countStatus != null" >
+                countStatus
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{name,jdbcType=VARCHAR},
+            #{productNum,jdbcType=INTEGER},
+            #{cost,jdbcType=DECIMAL},
+            #{price,jdbcType=DECIMAL},
+            #{storeCount,jdbcType=INTEGER},
+            #{img,jdbcType=VARCHAR},
+            #{productGroup.id,jdbcType=INTEGER},
+            #{productGroup.name,jdbcType=VARCHAR},
+            #{status,jdbcType=INTEGER},
+            #{userId,jdbcType=INTEGER},
+            #{userName,jdbcType=VARCHAR},
+            #{agentId,jdbcType=INTEGER},
+            #{agentName,jdbcType=VARCHAR},
+            #{orderNum,jdbcType=INTEGER},
+            #{threshold,jdbcType=INTEGER},
+            <if test="countStatus != null" >
+            #{countStatus,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="update" parameterType="com.haiyi.domain.Product" >
+        update product
+        <set>
+            <if test="name != null and name != ''" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="productNum != null" >
+                productNum = #{productNum,jdbcType=INTEGER},
+            </if>
+            <if test="cost != null" >
+                cost = #{cost,jdbcType=DECIMAL},
+            </if>
+            <if test="price != null" >
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="storeCount != null" >
+                storeCount = #{storeCount,jdbcType=INTEGER},
+            </if>
+            <if test="img != null and img != ''" >
+                img = #{img,jdbcType=VARCHAR},
+            </if>
+            <if test="productGroup != null" >
+                productGroupId = #{productGroup.id,jdbcType=INTEGER},
+                productGroupName = #{productGroup.name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="orderNum != null" >
+                orderNum = #{orderNum,jdbcType=INTEGER},
+            </if>
+            <if test="threshold != null" >
+                threshold = #{threshold,jdbcType=INTEGER},
+            </if>
+            <if test="countStatus != null" >
+                countStatus = #{countStatus,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER} and userId = #{userId}
+    </update>
+
+
+
+    <!--根据设备号和商品Id查询-->
+    <select id="findByDevNumAndProductId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+      select p.* from product p,dev v,productgroup g where g.devId = v.id and p.productGroupId=g.id and v.num = #{devNum,jdbcType=INTEGER} and p.id=#{productId,jdbcType=INTEGER}
+  </select>
+
+    <!--根据设备号和商品过道查询-->
+    <select id="findByDevNumAndOrderNum" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+      select p.* from product p,dev v,productgroup g where g.devId = v.id and p.productGroupId=g.id and v.num = #{devNum,jdbcType=INTEGER} and p.orderNum=#{orderNum,jdbcType=INTEGER}
+  </select>
+
+    <!--根据Id查询-->
+    <select id="findByNum" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select <include refid="Base_Column_List" /> from product where productNum = #{productNum,jdbcType=INTEGER}
+    </select>
+
+
+    <select id="findEmergencyProduct" resultMap="BaseResultMap" parameterType="int">
+        select id,name,storeCount,threshold  from product where userId = #{userId,jdbcType=INTEGER} and storeCount &lt;= threshold order by id DESC
+    </select>
+</mapper>

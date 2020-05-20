@@ -1,0 +1,44 @@
+package com.haiyi.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.maizi.anno.AuthAnno;
+/**
+ * 账单
+ * @author Administrator
+ *
+ */
+@Controller
+@RequestMapping("/accountLogs")
+public class AccountLogController {
+	
+	private final String LIST_UI="accountLog/list";
+	private final String DETAIL_UI="accountLog/detail";
+	
+	/**
+	 * 账单列表界面
+	 * @return        
+	 */
+	@RequestMapping(value="/listUI",method=RequestMethod.GET)
+	@AuthAnno
+	public String listUI(ModelMap modelMap){
+		return LIST_UI;
+	}
+
+	/**
+	 * 账单详情
+	 * @param id
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value="/{id}",method=RequestMethod.GET)
+	@AuthAnno
+	public String detailUI(@PathVariable Integer id,ModelMap modelMap){
+		modelMap.addAttribute("id",id);
+		return DETAIL_UI;
+	}
+}

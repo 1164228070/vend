@@ -1,0 +1,53 @@
+package com.haiyi.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.haiyi.dao.MemberMapper;
+import com.haiyi.domain.Member;
+import com.haiyi.service.MemberService;
+import com.maizi.utils.MD5;
+
+@Service
+public class MemberServiceImpl implements MemberService{
+	
+	@Autowired
+	MemberMapper memberMapper;
+
+	/**
+	 * 登录
+	 * @param loginName
+	 * @param password
+	 * @return
+	 */
+	@Override
+	public Member login(String loginName, String password) {
+		return memberMapper.login(loginName, MD5.GetMD5Code(password));
+	}
+
+	/**
+	 * 根据Id查找
+	 * @param memberId
+	 * @return
+	 */
+	@Override
+	public Member findById(String memberId) {
+		return memberMapper.findById(memberId);
+	}
+
+	/**
+	 * 更新余额
+	 */
+	@Override
+	public int updateBalance(Member member) {
+		Member temp = new Member();
+		temp.setId(member.getId());
+		temp.setScore(member.getScore());
+		return this.memberMapper.update(temp);
+	}
+
+	@Override
+	public void updatePassword(String passwordNew,Integer memberId) {
+		this.memberMapper.updatePWD(MD5.GetMD5Code(passwordNew),memberId);
+	}
+}

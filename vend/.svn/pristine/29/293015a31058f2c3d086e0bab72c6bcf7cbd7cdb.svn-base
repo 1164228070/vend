@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.ComsumeDetailMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.ComsumeDetail" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="orderId" property="orderId" jdbcType="VARCHAR" />
+      <result column="refere" property="refere" jdbcType="VARCHAR" />
+      <result column="orderNum" property="orderNum" jdbcType="INTEGER" />
+      <result column="productName" property="productName" jdbcType="VARCHAR" />
+      <result column="buyCount" property="buyCount" jdbcType="INTEGER" />
+      <result column="outputCount" property="outputCount" jdbcType="INTEGER" />
+      <result column="oriPrice" property="oriPrice" jdbcType="DECIMAL" />
+      <result column="price" property="price" jdbcType="DECIMAL" />
+      <result column="payAmount" property="payAmount" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      orderId,
+      refere,
+      orderNum,
+      productName,
+      buyCount,
+      outputCount,
+      oriPrice,
+      price,
+      payAmount
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from comsume_detail where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.ComsumeDetailQuery">
+      select <include refid="Base_Column_List" /> from comsume_detail
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="keyWords != null and keyWords != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.keyWords + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+          <if test="orderId != null and orderId != ''">
+              and orderId = #{orderId}
+          </if>
+      </trim>
+      order by id DESC
+  </select>
+
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.ComsumeDetail" >
+    insert into comsume_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        orderId,
+        refere,
+        orderNum,
+        productName,
+        buyCount,
+        oriPrice,
+        price,
+        payAmount
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{orderId,jdbcType=VARCHAR},
+        #{refere,jdbcType=VARCHAR},
+        #{orderNum,jdbcType=INTEGER},
+        #{productName,jdbcType=VARCHAR},
+        #{buyCount,jdbcType=INTEGER},
+        #{oriPrice,jdbcType=DECIMAL},
+        #{price,jdbcType=DECIMAL},
+        #{payAmount,jdbcType=DECIMAL}
+    </trim>
+  </insert>
+    <!--完成出货数量-->
+    <update id="updatefinish">
+        update comsume_detail set outputCount=outputCount + 1 where orderId = #{orderId,jdbcType=VARCHAR} and orderNum = #{orderNum,jdbcType=INTEGER} and buyCount >outputCount
+    </update>
+</mapper>

@@ -1,0 +1,19 @@
+package com.haiyi.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.haiyi.dao.ProductLogMapper;
+import com.haiyi.domain.ProductLog;
+import com.haiyi.query.ProductLogQuery;
+import com.haiyi.service.ProductLogService;
+import com.haiyi.service.base.impl.BaseServiceImpl;
+
+@Service
+public class ProductLogServiceImpl extends BaseServiceImpl<ProductLog, ProductLogQuery> implements ProductLogService{
+
+	@Autowired
+	public void setProductLogMapper(ProductLogMapper productLogMapper){
+		this.daoMapper = productLogMapper;
+	}
+}

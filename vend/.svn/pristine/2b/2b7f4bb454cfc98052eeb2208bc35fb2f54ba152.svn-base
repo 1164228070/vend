@@ -1,0 +1,65 @@
+package com.haiyi.domain;
+import com.haiyi.domain.base.BaseDomain;
+import com.maizi.anno.ClassInfoAnno;
+import com.maizi.anno.FilterInfoAnno;
+/**
+  * 
+  * @ClassName: ProductLog
+  * @Company: 麦子科技
+  * @Description: ProductLog实体
+  * @author 技术部-刘强峰
+  * @date 2016年5月1日 下午1:38:35
+  *
+ */
+@ClassInfoAnno(msg="商品记录",resourceId="id",dbId = "id")
+@FilterInfoAnno(fields = {""},sorts={""})
+public class ProductLog extends BaseDomain {
+    //名称
+    private String name;                                      
+     //商品编号
+    private Integer productNum;                                    
+     //XXXX
+    private Integer productId;                                    
+     //库存
+    private Integer storeCount;                                    
+     //记录数量(负数代表出库、正数代表入库)
+    private Integer count;                                    
+     //代理Id
+    private Integer agentId;
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Integer getProductNum() {
+		return productNum;
+	}
+	public void setProductNum(Integer productNum) {
+		this.productNum = productNum;
+	}
+	public Integer getProductId() {
+		return productId;
+	}
+	public void setProductId(Integer productId) {
+		this.productId = productId;
+	}
+	public Integer getStoreCount() {
+		return storeCount;
+	}
+	public void setStoreCount(Integer storeCount) {
+		this.storeCount = storeCount;
+	}
+	public Integer getCount() {
+		return count;
+	}
+	public void setCount(Integer count) {
+		this.count = count;
+	}
+	public Integer getAgentId() {
+		return agentId;
+	}
+	public void setAgentId(Integer agentId) {
+		this.agentId = agentId;
+	}              
+}

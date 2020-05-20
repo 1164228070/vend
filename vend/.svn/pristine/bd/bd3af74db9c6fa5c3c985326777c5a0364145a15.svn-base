@@ -1,0 +1,3 @@
+tempPath=temp
+image=/usr/local/src/file/images/
+imageServer=http://47.99.167.234:9090/images/

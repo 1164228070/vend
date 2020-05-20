@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.ProductGroupMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.ProductGroup" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="num" property="num" jdbcType="VARCHAR" />
+      <result column="devId" property="dev.id" jdbcType="INTEGER" />
+      <result column="devNum" property="devNum" jdbcType="VARCHAR" />
+      <result column="userId" property="user.id" jdbcType="INTEGER" />
+      <result column="userName" property="userName" jdbcType="VARCHAR" />
+      <result column="agentId" property="agent.id" jdbcType="INTEGER" />
+      <result column="agentName" property="agentName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      name,
+      num,
+      devId,
+      devNum,
+      userId,
+      userName,
+      agentId,
+      agentName
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from productgroup where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="findByDevNum" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from productgroup where devNum = #{devNum,jdbcType=VARCHAR}
+  </select>
+
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.ProductGroupQuery">
+      select <include refid="Base_Column_List" /> from productgroup
+      <trim prefix="where" prefixOverrides="and |or ">
+          <if test="name != null and name != ''">
+              <bind name="likeName" value="'%' + _parameter.name + '%'" />
+              and name like #{likeName,jdbcType=VARCHAR}
+          </if>
+         <if test="user != null and user.id != null">
+            and userId = #{user.id,jdbcType=INTEGER}
+         </if>
+         <if test="userName != null and userName != null">
+            and userName = #{userName,jdbcType=VARCHAR}
+         </if>
+         <if test="num != null and num != null">
+            and num = #{num,jdbcType=VARCHAR}
+         </if>
+         <if test="agent != null and agent.id != null">
+            and agentId = #{agent.id,jdbcType=INTEGER}
+         </if>
+         <if test="agentName != null and agentName != null">
+            and agentName = #{agentName,jdbcType=VARCHAR}
+         </if>
+         <if test="devId != null">
+            and devId = #{devId,jdbcType=INTEGER}
+         </if>
+         <if test="devNum != null">
+            and devNum = #{devNum,jdbcType=VARCHAR}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from productgroup where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from productgroup where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.ProductGroup" >
+    insert into productgroup
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        name,
+        num,
+        <if test="dev != null" >
+            devId,
+            devNum,
+        </if>
+        userId,
+        userName,
+        agentId,
+        agentName
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{name,jdbcType=VARCHAR},
+        #{num,jdbcType=VARCHAR},
+        <if test="dev != null" >
+            #{dev.id,jdbcType=INTEGER},
+            #{devNum,jdbcType=VARCHAR},
+        </if>
+        #{user.id},
+        #{userName,jdbcType=VARCHAR},
+        #{agent.id},
+        #{agentName,jdbcType=VARCHAR}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.ProductGroup" >
+      update productgroup
+      <set>
+          <if test="name != null and name != ''" >
+              name = #{name,jdbcType=VARCHAR},
+          </if>
+          <if test="num != null and num != ''" >
+              num = #{num,jdbcType=VARCHAR},
+          </if>
+          <if test="dev != null" >
+              devId = #{dev.id,jdbcType=INTEGER},
+              devNum = #{devNum,jdbcType=VARCHAR},
+          </if>
+          <if test="agent != null" >
+              agentId = #{agent.id,jdbcType=VARCHAR},
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+</mapper>

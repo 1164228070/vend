@@ -1,0 +1,104 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="form"  uri="http://www.springframework.org/tags/form" %>  
+<!DOCTYPE html>
+<html>
+	<head>
+        <!-- 基础库 -->
+	    <%@ include file="/WEB-INF/jsp/common/common.jspf" %>
+		<title>个人中心</title>
+	</head>
+	<body>
+	    
+	    <div class="pb60">
+	    
+			<div class="panel container" id="user-info">   
+			    <div class="panel-item">    
+			        <div class="panel-inner">
+			            <a href="${pageContext.request.contextPath}/members/info" class="block clearfix">
+			                <img id="head-img" class="panel-pic" width="70" height="70" src="${pageContext.request.contextPath}/static/images/logo.png">
+							<div class="panel-info f12">    
+								<h2 id="loginName" class="panel-tit nowrap">未登录</h2>
+							</div>  
+			            </a>
+					    <a href="javascript:;" class="certify">  
+					        <p class="lightgray small no"> </p>   
+					    </a>
+						<i class="arr-right absolute-vertical-middle"></i>
+			        </div>  
+			    </div>     
+			    
+			    <ul class="list-fl mb10">     
+					<li>
+						<a href="javascript:;" class="block">
+							<i class="icos4 i4-quan"></i> 金币  <ins class="emb-red" id="virtualCorn"></ins>
+						</a>
+					</li>   
+					<li>
+						<a href="javascript:;" class="pull-right"><i class="icos4 i4-score"></i> 积分 <ins class="emb-red" id="score"></ins></a>
+					</li>
+				</ul>
+			</div>
+			
+			<nav class="container panel">
+			    <!-- 
+					<a class="block panel-chunk " href="${pageContext.request.contextPath}/msgs">
+						<h3 class="icos4 i4-active">消息</h3>
+						<i class="arr-right absolute-vertical-middle"></i>
+					</a>
+				 -->
+				<a class="block panel-chunk" href="${pageContext.request.contextPath}/members/fortune">
+					<h3 class="icos4 i4-bx">我的票据</h3>        
+					<i class="arr-right absolute-vertical-middle"></i>
+				</a>
+				<a class="block panel-chunk" href="${pageContext.request.contextPath}/members/cards">
+					<h3 class="icos4 i4-tui">会员卡</h3>        
+					<i class="arr-right absolute-vertical-middle"></i>
+				</a>   
+				<a class="block panel-chunk" href="${pageContext.request.contextPath}/accountLogs/listUI">
+					<h3 class="icos4 i4-order">账单</h3>
+					<i class="arr-right absolute-vertical-middle"></i>
+				</a>
+				<a class="block panel-chunk" href="${pageContext.request.contextPath}/comsumes/listUI">
+					<h3 class="icos4 i4-shop">消费记录</h3>
+					<i class="arr-right absolute-vertical-middle"></i>
+				</a>
+				<a class="block panel-chunk" href="${pageContext.request.contextPath}/members/password">
+					<h3 class="icos4 i4-setup">修改密码</h3>
+					<i class="arr-right absolute-vertical-middle"></i>
+				</a>
+				
+				<a class="block panel-chunk" href="tel:110">
+					<h3 class="icos4 i4-phone">拨打热线</h3>
+				</a>
+			</nav>
+	    </div>
+	    
+		<!-- 主体 end -->  
+		<a href="javascript:;" class="J-go-back go-back"></a>
+		<!-- 公共js -->
+	    <%@ include file="/WEB-INF/jsp/common/basic.jspf" %>
+	    
+	    <script type="text/javascript">
+	        var version = "${requestScope.version}";
+	        $(function(){
+	        	refresh();
+	        });   
+	        function refresh(){
+        	    //获取个人信息
+			    request.ajax(common.JSONPContextPath+"/members","GET",{},false,function(result){
+			    	if(result.success){  
+			    		//填充相关信息
+			    		$("#loginName").text(result.data.loginName);
+			    		$("#virtualCorn").text(result.data.virtualCorn);
+			    		$("#score").text(result.data.score);
+			    	}else{
+			    		//获取失败请重新刷新
+			    		$.tip.alert(2, result.msg, 2000);
+			    	}
+			    });    
+	        }
+	    </script>
+	</body>
+</html>

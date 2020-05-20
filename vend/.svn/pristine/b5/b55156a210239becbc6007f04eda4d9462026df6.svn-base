@@ -1,0 +1,31 @@
+package com.haiyi.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.haiyi.dao.DevAuthMapper;
+import com.haiyi.domain.DevAuth;
+import com.haiyi.query.DevAuthQuery;
+import com.haiyi.service.DevAuthService;
+import com.haiyi.service.base.impl.BaseServiceImpl;
+
+@Service
+public class DevAuthServiceImpl extends BaseServiceImpl<DevAuth, DevAuthQuery> implements DevAuthService{
+
+	@Autowired
+	public void setDevAuthMapper(DevAuthMapper devAuthMapper){
+		this.daoMapper = devAuthMapper;
+	}
+
+	@Override
+	public List<DevAuth> findDevAuthByAgentId(Integer agentId) {
+		return ((DevAuthMapper)this.daoMapper).findDevAuthByAgentId(agentId);
+	}
+
+	@Override
+	public int updateStatus(Integer status, Integer agentId, String devNum) {
+		return ((DevAuthMapper)this.daoMapper).updateStatus(status, agentId, devNum);
+	}
+}

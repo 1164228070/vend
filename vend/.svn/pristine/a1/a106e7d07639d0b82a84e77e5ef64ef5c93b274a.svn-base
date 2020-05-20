@@ -1,0 +1,125 @@
+package com.haiyi.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.haiyi.domain.ComsumeLog;
+import com.haiyi.domain.base.LoginInfo;
+import com.haiyi.query.ComsumeLogQuery;
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.service.ProductService;
+import com.haiyi.utils.SessionUtil;
+import com.maizi.anno.AuthAnno;
+import com.maizi.exception.KPException;
+import com.maizi.utils.JsonModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/orders")
+public class OrderController {
+
+	@Autowired
+	ComsumeLogService comsumeLogService;
+
+
+	@Autowired
+	ProductService productService;
+
+
+	/**
+	 * 统一下单
+	 * @param orderNums   货道
+	 * @param counts      数量
+	 * @param devNum      设备编号
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value="/unifiedOrder",method=RequestMethod.POST,headers="X-Requested-With=XMLHttpRequest")
+	public @ResponseBody JsonModel unifiedorder(@RequestParam Integer [] orderNums,@RequestParam Integer [] counts,@RequestParam String devNum,HttpSession session){
+		JsonModel jsonModel = new JsonModel();
+		//参数校验
+		if(orderNums==null || counts==null || devNum == null || orderNums.length != counts.length){
+			jsonModel.setSuccess(false);
+			jsonModel.setMsg("参数错误");
+			return jsonModel;
+		}
+		//微信或者支付宝支付
+		LoginInfo loginInfo = SessionUtil.getCurrentLoginInfo(session);
+		String memberId = null;
+		if(loginInfo!=null){
+			memberId = loginInfo.getId()+"";
+		}
+		try {
+			Map<String,Object> result =comsumeLogService.unifiedorder(memberId,orderNums,counts,devNum);
+			jsonModel.setSuccess(true);
+			jsonModel.setMsg("下单成功");
+			jsonModel.setData(result);
+		} catch (KPException e) {
+			jsonModel.setMsg(e.getSelfMessage());
+		}
+		return jsonModel;
+	}
+
+	@RequestMapping(value="/{orderId}",method=RequestMethod.GET,headers="X-Requested-With=XMLHttpRequest")
+	public @ResponseBody JsonModel detail(@PathVariable String orderId){
+		JsonModel jsonModel = new JsonModel();
+		ComsumeLog comsumeLog = comsumeLogService.findByOrderId(orderId);
+		if(comsumeLog!=null){
+			jsonModel.setSuccess(true);
+			jsonModel.setData(comsumeLog);
+			return jsonModel;
+		}else{
+			jsonModel.setSuccess(false);
+			jsonModel.setMsg("参数错误");
+			return jsonModel;
+		}
+	}
+
+	/**
+	 * 手动催促出单
+	 * @param orderId
+	 * @return
+	 */
+	@RequestMapping(value="/{orderId}/outting",method=RequestMethod.GET,headers="X-Requested-With=XMLHttpRequest")
+	public @ResponseBody JsonModel outting(@PathVariable String orderId){
+		JsonModel jsonModel = new JsonModel();
+		return jsonModel;
+	}
+
+	@RequestMapping(value="/{orderId}/status",method=RequestMethod.GET,headers="X-Requested-With=XMLHttpRequest")
+	public @ResponseBody JsonModel status(@PathVariable String orderId){
+		JsonModel jsonModel = new JsonModel();
+		ComsumeLog comsumeLog = comsumeLogService.findByOrderId(orderId);
+		if(comsumeLog!=null){
+			jsonModel.setSuccess(true);
+			Map<String,Object> result = new HashMap<String,Object>();
+			result.put("payStatus",comsumeLog.getPayStatus());
+			comsumeLog = null;
+			jsonModel.setData(result);
+			return jsonModel;
+		}else{
+			jsonModel.setSuccess(false);
+			jsonModel.setMsg("参数错误");
+			return jsonModel;
+		}
+	}
+
+	/**
+	 * 返回消费记录
+	 * @return
+	 */
+	@RequestMapping(value="",method=RequestMethod.GET,headers="X-Requested-With=XMLHttpRequest")
+	@AuthAnno
+	public @ResponseBody JsonModel listComsumeLog(ComsumeLogQuery comsumeLogQuery,HttpSession session){
+		JsonModel jsonModel = new JsonModel();
+		comsumeLogQuery.setMemberId(SessionUtil.getCurrentLoginInfoId(session));
+		PageInfo<ComsumeLog> comsumeLogs = comsumeLogService.findBySelective(comsumeLogQuery);
+		jsonModel.setData(comsumeLogs.getList());
+		jsonModel.setSuccess(true);
+		return jsonModel;
+	}
+}

@@ -1,0 +1,18 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+        <!-- 基础库 -->  
+	    <%@ include file="/WEB-INF/jsp/common/common.jspf" %>
+		<title>设置</title>
+	</head>
+	<body>
+		<div class="container pt10">
+		    <p class="mt10">
+		   	 关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内关于我们页面内
+		    </p>
+		</div>
+	    
+		<a href="javascript:;" class="go-back J-go-back"></a>
+	</body>
+</html>

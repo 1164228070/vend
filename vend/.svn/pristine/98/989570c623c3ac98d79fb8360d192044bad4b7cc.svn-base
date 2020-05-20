@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.MemberMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.Member" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="loginName" property="loginName" jdbcType="VARCHAR" />
+      <result column="password" property="password" jdbcType="VARCHAR" />
+      <result column="balance" property="balance" jdbcType="DECIMAL" />
+      <result column="score" property="score" jdbcType="INTEGER" />
+      <result column="status" property="status" jdbcType="INTEGER" />
+      <result column="registeDate" property="registeDate" jdbcType="DATE"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      name,
+      loginName,
+      password,
+      balance,
+      score,
+      status,
+      registeDate
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from member where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.MemberQuery">
+      select <include refid="Base_Column_List" /> from member
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="name != null and name != ''">
+            <bind name="likeName" value="'%' + _parameter.name + '%'" />
+            and name like #{likeName,jdbcType=VARCHAR}
+         </if>
+         <if test="loginName != null and loginName != ''">
+            <bind name="likeLoginName" value="'%' + _parameter.loginName + '%'" />
+            and loginName like #{likeLoginName,jdbcType=VARCHAR}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  <!-- 查找数量 --> 
+  <select id="count" resultType="int"  parameterType="java.util.Map">
+    select count(id) from member
+     <trim prefix="where" prefixOverrides="and | or">
+      <if test="status != null" >
+        and STATUS = #{status,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </select>
+
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from member where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from member where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.Member" >
+    insert into member
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        name,
+        loginName,
+        password,
+        <if test="balance != null and balance != ''" >
+            balance,
+        </if>
+        score,
+        status,
+        registeDate
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR},
+        #{loginName,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR},
+        <if test="balance != null and balance != ''" >
+            #{balance,jdbcType=DECIMAL},
+        </if>
+        #{score,jdbcType=INTEGER},
+        #{status,jdbcType=INTEGER},
+        #{registeDate,jdbcType=DATE},
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.Member" >
+      update member
+      <set>
+          <if test="name != null and name != ''" >
+              name = #{name,jdbcType=VARCHAR},
+          </if>
+          <if test="loginName != null and loginName != ''" >
+              loginName = #{loginName,jdbcType=VARCHAR},
+          </if>
+          <if test="password != null and password != ''" >
+              password = #{password,jdbcType=VARCHAR},
+          </if>
+          <if test="balance != null and balance != ''" >
+              balance = #{balance,jdbcType=DECIMAL},
+          </if>
+          <if test="score != null" >
+              score = #{score,jdbcType=INTEGER},
+          </if>
+          <if test="status != null" >
+              status = #{status,jdbcType=INTEGER}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 更新密码 -->
+  <update id="updatePWD" >
+      update member set password = #{password,jdbcType=VARCHAR} where id = #{memberId,jdbcType=INTEGER}
+  </update>
+      
+  <!--登录-->
+  <select id="login" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List" /> from member where loginName = #{loginName,jdbcType=VARCHAR} AND password = #{password,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <!--查询余额-->
+  <!--<select id="queryBalance" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List" /> from member where cardNum = #{cardNum,jdbcType=VARCHAR}
+  </select>-->
+  
+
+	
+</mapper>

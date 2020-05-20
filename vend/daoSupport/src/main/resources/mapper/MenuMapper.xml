@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.MenuMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.Menu" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="URL" property="URL" jdbcType="VARCHAR" />
+      <result column="icon" property="icon" jdbcType="VARCHAR" />
+      <result column="leaf" property="leaf" jdbcType="BIT" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="parentId" property="parentId" jdbcType="INTEGER" />
+      <result column="accessToken" property="accessToken" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <resultMap id="LevelMap" type="com.haiyi.domain.Menu" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="URL" property="URL" jdbcType="VARCHAR" />
+      <result column="icon" property="icon" jdbcType="VARCHAR" />
+      <result column="leaf" property="leaf" jdbcType="BIT" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="parentId" property="parentId" jdbcType="INTEGER" />
+      <result column="accessToken" property="accessToken" jdbcType="VARCHAR" />
+      
+      <collection property="children" ofType="com.haiyi.domain.Menu" column="id" select="com.haiyi.dao.MenuMapper.children"></collection>
+  </resultMap>
+   
+  <sql id="Base_Column_List" >
+      id,
+      URL,
+      icon,
+      leaf,
+      name,
+      parentId,
+      accessToken
+  </sql>
+  
+  <!-- 查询菜单树 -->
+  <select id="findLevelMenu" resultMap="LevelMap">
+      select <include refid="Base_Column_List" /> from t_menu where parentId is null order by id ASC
+  </select>
+    
+  <!-- 根据父Id查询 -->
+  <select id="children" resultMap="BaseResultMap" parameterType="INTEGER">
+      select <include refid="Base_Column_List" /> from t_menu where parentId = #{parentId}
+  </select>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from t_menu where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.MenuQuery">
+      select <include refid="Base_Column_List" /> from t_menu
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="keyWords != null and keyWords != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.keyWords + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+         <choose>
+             <when test="parentId != null">
+                and parentId = #{parentId,jdbcType=INTEGER}
+             </when>
+             <otherwise>
+                and parentId is null
+             </otherwise>
+         </choose>
+      </trim>
+      order by id DESC
+  </select>
+  
+  <!-- 根据父Id查询 -->
+  <select id="findByParent" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+      select <include refid="Base_Column_List" /> from t_menu where
+      <choose>
+          <when test="parentId != null">
+             parentId = #{parentId}
+          </when>
+          <otherwise>
+             parentId is null
+          </otherwise>
+      </choose>
+  </select>
+  
+  <!-- 根据id集合查询 -->
+  <select id="findByIds" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+      select <include refid="Base_Column_List" /> from t_menu where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from t_menu where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from t_menu where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.Menu" >
+    insert into t_menu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        <if test="URL != null and URL != ''" >
+            URL,
+        </if>
+        <if test="icon != null and icon != ''" >
+            icon,
+        </if>
+        <if test="leaf != null" >
+            leaf,
+        </if>
+        <if test="name != null and name != ''" >
+            name,
+        </if>
+        <if test="parentId != null" >
+            parentId,
+        </if>
+        accessToken
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        <if test="URL != null and URL != ''" >
+            #{URL,jdbcType=VARCHAR},
+        </if>
+        <if test="icon != null and icon != ''" >
+            #{icon,jdbcType=VARCHAR},
+        </if>
+        <if test="leaf != null" >
+            #{leaf,jdbcType=BIT},
+        </if>
+        <if test="name != null and name != ''" >
+            #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="parentId != null" >
+            #{parentId,jdbcType=INTEGER},
+        </if>
+        #{accessToken,jdbcType=VARCHAR}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.Menu" >
+      update t_menu
+      <set>
+          <if test="URL != null and URL != ''" >
+              URL = #{URL,jdbcType=VARCHAR},
+          </if>
+          <if test="icon != null and icon != ''" >
+              icon = #{icon,jdbcType=VARCHAR},
+          </if>
+          <if test="leaf != null" >
+              leaf = #{leaf,jdbcType=BIT},
+          </if>
+          <if test="name != null and name != ''" >
+              name = #{name,jdbcType=VARCHAR},
+          </if>
+          <if test="parentId != null" >
+              parentId = #{parentId,jdbcType=INTEGER},
+          </if>
+          <if test="accessToken != null and accessToken != ''" >
+              accessToken = #{accessToken,jdbcType=VARCHAR}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据roleIds IN 查询 -->
+  <select id="findByRoleIds" resultMap="BaseResultMap">
+     select DISTINCT m.* from t_menu m,t_role_menu t WHERE m.id = t.menuId and t.roleId IN
+     <foreach item="item" index="index" collection="array" open="(" separator="," close=")">  
+	     #{item}  
+	</foreach>  
+  </select>
+  
+    <!-- 根据roleId查询 -->
+  <select id="findByRole" resultType="INTEGER" parameterType="INTEGER" >
+    select menuId from t_role_menu where roleId = #{roleId}
+  </select>
+  
+  <!-- 删除角色和菜单的关系 -->
+  <delete id="clearGrant" parameterType="java.util.Map">
+    delete from t_role_menu 
+    <trim prefix="where" prefixOverrides="and | or ">
+       <if test="roleId != null" >
+           roleId = #{roleId,jdbcType=INTEGER}
+       </if>
+       <if test="menuId != null" >
+           and menuId = #{menuId,jdbcType=INTEGER}
+       </if>
+    </trim>
+  </delete>
+  
+  <!-- 保存菜单和角色的关系 -->
+  <insert id="grant" parameterType="java.util.Map">
+    INSERT INTO t_role_menu (roleId,menuId) VALUES (#{roleId},#{menuId})
+  </insert>
+	
+</mapper>

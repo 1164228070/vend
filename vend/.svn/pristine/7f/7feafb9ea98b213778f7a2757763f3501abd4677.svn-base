@@ -1,0 +1,9 @@
+package com.haiyi.service;
+
+import com.github.pagehelper.PageInfo;
+import com.haiyi.domain.ProductGroup;
+import com.haiyi.query.ProductGroupQuery;
+
+public interface ProductGroupService{
+    PageInfo<ProductGroup> findBySelective(ProductGroupQuery query);
+}

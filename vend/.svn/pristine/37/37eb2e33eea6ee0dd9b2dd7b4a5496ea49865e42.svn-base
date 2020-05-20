@@ -1,0 +1,55 @@
+@charset "UTF-8";
+/*
+* 注册登录
+*/
+.icos-sprite, .i-qq, .i-wx { background-image: url('../images/icos-sdaf00e6def.png'); background-repeat: no-repeat; }
+
+.icos2-sprite { background-image: url('../images/icos2-s346d02eb21.png'); background-repeat: no-repeat; }
+
+.icos3-sprite { background-image: url('../images/icos3-se522a74f87.png'); background-repeat: no-repeat; }
+
+.icos4-sprite { background-image: url('../images/icos4-s68cde2f259.png'); background-repeat: no-repeat; }
+
+.icos5-sprite { background-image: url('../images/icos5-sea2b3c57d9.png'); background-repeat: no-repeat; }
+
+.icos6-sprite { background-image: url('../images/icos6-se79c4339fc.png'); background-repeat: no-repeat; }
+
+.lv-sprite { background-image: url('../images/lv-s1d40be64d6.png'); background-repeat: no-repeat; }
+
+.lv2-sprite { background-image: url('../images/lv2-sbd7da9d79a.png'); background-repeat: no-repeat; }
+
+
+.p-agre a { color: #ff6e3b; }
+
+.get-verCode { position: absolute; top: 0; right: 0; bottom: 0; width: 120px; padding-left: 0; padding-right: 0; line-height: 2.4; color: #ff6e3b; border-radius: 0; background-color: #fff; border-left: 1px solid #ccc; }
+
+.i-qq, .i-wx { background-size: 40px; background-position: 0 -553px; display: inline-block; vertical-align: middle; height: 20px; }
+
+.i-qq { width: 20px; background-position: 0 -553px; }
+
+.i-wx { width: 25px; background-position: 0 -697px; }
+
+.btn-switch { position: absolute; right: 10px; top: 50%; -moz-transform:  translateY(-50%); -ms-transform:  translateY(-50%); -webkit-transform:  translateY(-50%); transform:  translateY(-50%); }
+
+.fm-line .i-radio { margin: 8px 0; }
+
+.self-slt { display: inline-block; vertical-align: middle; position: relative; min-height: 36px; }
+.self-slt .slt { position: relative; min-height: 36px; width: 100%; margin: 0; padding: 0; padding-right: 25px; z-index: 2; border1: 1px solid transparent; border: 0; background: transparent; font-size: 1.143857rem; -webkit-appearance: none; appearance: none; outline: none; }
+.self-slt:after { content: ''; position: absolute; top: 50%; right: 5px; z-index: 1; height: 10px; width: 10px; border-top: 2px solid #999; border-left: 2px solid #999; -webkit-transform: translateY(-60%) rotate(-135deg); transform: translateY(-60%) rotate(-135deg); }
+
+.nav-header-white .reg-link { font-size: 1.1rem; }
+
+.fm-login .fm-line, .fm-login .container { padding-left: 20px; padding-right: 20px; }
+
+.fm-login .btn-switch { right: 20px;line-height: 24px}
+
+.login-line { margin: 20px 0; }
+
+.otherLogin { position: fixed; bottom: 0; width: 100%; line-height: 30px; padding: 5px 0; background-color: #fff; text-align: center; }
+.otherLogin .box-flex { display: block; width: 50%; }
+.otherLogin .box-flex:last-child { border-left: 1px solid #ccc; }
+
+.infoTips { margin: 20px 0; }
+.infoTips dt { font-size: 1.2rem; margin-bottom: 5px; }
+
+.set-default-address { line-height: 2.5715rem; }

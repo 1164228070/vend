@@ -1,0 +1,61 @@
+package com.haiyi.query;
+import com.haiyi.query.base.BaseQuery;
+public class DevQuery extends BaseQuery{
+	
+	private Integer agentId;
+	private String num;       //设备编号
+	private Integer shortNum;
+	
+	private Integer state;    //设备状态
+	
+	private boolean tokened;  //是否授权
+
+	public Integer getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(Integer agentId) {
+		this.agentId = agentId;
+	}
+
+	@Override
+	public String getOrder() {
+		return null;
+	}
+
+	public String getNum() {
+		return num;
+	}
+
+	public void setNum(String num) {
+		this.num = num;
+	}
+
+	public Integer getShortNum() {
+		return shortNum;
+	}
+
+	public void setShortNum(Integer shortNum) {
+		this.shortNum = shortNum;
+	}
+
+	public boolean isTokened() {
+		return tokened;
+	}
+
+	public void setTokened(boolean tokened) {
+		this.tokened = tokened;
+	}
+
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
+
+	@Override
+	public void addQuery(String condition, Object... param) {
+	}
+}

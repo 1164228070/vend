@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+        
+    <!-- 开启aspect注解 -->
+    <aop:aspectj-autoproxy/>	
+	<bean class="com.haiyi.aop.LogAop"></bean>
+        
+    <context:annotation-config/>
+     <bean name="orderAccountTask" class="com.haiyi.task.StatisticOrderTask"></bean>
+    
+	<task:scheduled-tasks>
+	    <!-- 每个月1号的凌晨1点执行 -->
+		<task:scheduled ref="orderAccountTask" method="monthStatistic" cron="0 0 1 1 * ?" />
+	</task:scheduled-tasks>
+
+	<!-- 自动扫描(自动注入),也可以使用注解装配(<context:annotation-config/> 元素) -->
+	<context:component-scan base-package="com.haiyi.service.impl" />
+	<context:component-scan base-package="com.haiyi.listener" />
+	<import resource="classpath:/spring-mybatis.xml"/>
+ 
+</beans>

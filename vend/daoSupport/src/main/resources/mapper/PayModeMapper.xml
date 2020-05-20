@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.PayModeMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.PayMode" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="mode" property="mode" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      mode
+  </sql>
+
+
+
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from payMode where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  
+ <!--  多条件查询
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.PayModeQuery">
+      select <include refid="Base_Column_List" /> from payMode
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="name != null and name != ''">
+            <bind name="likeName" value="'%' + _parameter.name + '%'" />
+            and name like #{likeName,jdbcType=VARCHAR}
+         </if>
+      </trim>
+      order by id DESC
+  </select>-->
+
+    <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.PayModeQuery">
+        select <include refid="Base_Column_List" /> from payMode
+    </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from payMode where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from payMode where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.PayMode" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+    insert into payMode
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        mode
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{mode,jdbcType=TINYINT}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.PayMode" >
+      update payMode
+      <set>
+          <if test="mode != null and mode != ''" >
+              mode = #{mode,jdbcType=TINYINT},
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+
+	
+</mapper>

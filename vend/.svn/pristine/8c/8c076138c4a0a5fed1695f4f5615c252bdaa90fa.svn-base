@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.AgentRoleMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.AgentRole" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      name
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from agent_role where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.AgentRoleQuery">
+      select <include refid="Base_Column_List" /> from agent_role
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="keyWords != null and keyWords != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.keyWords + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from agent_role where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from agent_role where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.AgentRole" >
+    insert into agent_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        name
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.AgentRole" >
+      update agent_role
+      <set>
+          <if test="name != null and name != ''" >
+              name = #{name,jdbcType=VARCHAR}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据roleId查询 -->
+  <select id="findMenuIds" resultType="INTEGER" parameterType="INTEGER" >
+    select menuId from t_agent_role_menu where roleId = #{agentRoleId}
+  </select>
+  
+  <!-- 删除代理角色和菜单的关系 -->
+  <delete id="clearGrant" parameterType="java.util.Map">
+    delete from t_agent_role_menu WHERE 
+    <choose>
+        <when test="roleId != null">
+            roleId = #{roleId}
+        </when>
+        <otherwise>
+            menuId = #{menuId}
+        </otherwise>
+    </choose>
+  </delete>
+  
+  <!-- 保存菜单和代理角色的关系 -->
+  <insert id="grant" parameterType="java.util.Map">
+    INSERT INTO t_agent_role_menu (roleId,menuId) VALUES (#{roleId},#{menuId})
+  </insert>
+  
+  <!-- 查找代理角色下所有员工的权限 -->
+  <select id="findUserMenuIdsByAgentRoleId" resultType="java.util.Map" parameterType="INTEGER" >
+    select m.* from agent a,t_role t,t_role_menu m where a.id = t.agentId and t.id = m.roleId and a.agentRoleId  = #{agentRoleId}
+  </select>
+</mapper>

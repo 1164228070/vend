@@ -1,0 +1,66 @@
+package com.haiyi.netty.server.handler;
+
+import com.haiyi.domain.Dev;
+import com.haiyi.netty.packet.CarWashCostPacket;
+import com.haiyi.netty.packet.CarWashCostPacket;
+import com.haiyi.netty.packet.CarWashCostResponsePacket;
+import com.haiyi.netty.server.handler.auth.Session;
+import com.haiyi.netty.server.handler.auth.SessionUtil;
+import com.haiyi.netty.utils.LoginUtil;
+import com.haiyi.service.DevService;
+import com.haiyi.service.MemberService;
+import com.haiyi.service.impl.MemberServiceImpl;
+import com.haiyi.utils.SpringUtil;
+import com.maizi.utils.LogUtils;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+//1. 加上注解标识，表明该 handler 是可以多个 channel 共享的
+@ChannelHandler.Sharable
+public class CarWashCostHandle extends SimpleChannelInboundHandler<CarWashCostPacket>{
+
+    private static final CarWashCostHandle carWashCostHandle = new CarWashCostHandle();
+    private CarWashCostHandle() {
+    }
+
+    public static CarWashCostHandle getInstance() {
+        return carWashCostHandle;
+    }
+
+    /**
+     * 当消息到达时
+     */
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, CarWashCostPacket carWashCostPacket) throws Exception {
+        LogUtils.logInfo("收到客户端[{}]结算请求",carWashCostPacket.getAccount());
+
+        //扣款TODO
+        carWashCostPacket.getAccount();
+        carWashCostPacket.getConsumption();
+        carWashCostPacket.getDevNum();
+        carWashCostPacket.getTime();
+
+        //调用Service
+        MemberService memberService =   SpringUtil.getBean("memberServiceImpl");
+             //order
+            //修改余额
+
+
+        CarWashCostResponsePacket larWashCostResponsePacket = new CarWashCostResponsePacket();
+        larWashCostResponsePacket.setVersion(carWashCostPacket.getVersion());
+        larWashCostResponsePacket.setSuccess(true);
+        larWashCostResponsePacket.setMsg("结算成功");
+        //TODO
+        // 登录响应
+        ctx.channel().writeAndFlush(larWashCostResponsePacket);
+    }
+
+
+
+
+}

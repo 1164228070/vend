@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.DictMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.Dict" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="type" property="type" jdbcType="INTEGER" />
+      <result column="note" property="note" jdbcType="VARCHAR" />
+  </resultMap>
+
+    <resultMap id="BaseResultMapDict" type="com.haiyi.domain.Dict">
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <collection property="dictVals" ofType="com.haiyi.domain.DictVal" >
+            <result column="name" property="name" jdbcType="VARCHAR" />
+            <result column="value" property="value" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      name,
+      type,
+      note
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from t_dict where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.DictQuery">
+      select <include refid="Base_Column_List" /> from t_dict
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="keyWords != null and keyWords != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.keyWords + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+      </trim>
+      order by type DESC
+  </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from t_dict where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from t_dict where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.Dict" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+    insert into t_dict
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        <if test="name != null and name != ''" >
+            name,
+        </if>
+        <if test="type != null" >
+            type,
+        </if>
+        <if test="note != null and note != ''" >
+            note
+        </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        <if test="name != null and name != ''" >
+            #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="type != null" >
+            #{type,jdbcType=INTEGER},
+        </if>
+        <if test="note != null and note != ''" >
+            #{note,jdbcType=VARCHAR}
+        </if>
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.Dict" >
+      update t_dict
+      <set>
+          <if test="name != null and name != ''" >
+              name = #{name,jdbcType=VARCHAR},
+          </if>
+          <if test="type != null" >
+              type = #{type,jdbcType=INTEGER},
+          </if>
+          <if test="note != null and note != ''" >
+              note = #{note,jdbcType=VARCHAR}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="selectDict"  resultMap="BaseResultMapDict">
+        SELECT c.type,d.name,d.value  FROM t_dictval d LEFT JOIN t_dict c ON d.dictId = c.id
+    </select>
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.DevAuthMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.DevAuth" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="status" property="status" jdbcType="INTEGER" />
+      <result column="devNum" property="devNum" jdbcType="VARCHAR" />
+      <association property="agent"  javaType="com.haiyi.domain.Agent" > 
+      			<result column="agentId" property="id" />
+                <result column="name" property="name" />
+      </association>       
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      agentId,
+      status,
+      devNum
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from dev_auth where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.DevAuthQuery">
+      select  d.id,
+      d.agentId,
+      d.status,
+      d.devNum,a.name from dev_auth d left join agent a on d.agentId = a.id
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="keyWords != null and keyWords != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.keyWords + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+         <if test="agentId != null and agentId != ''">
+            and agentId = #{agentId}
+         </if>
+         <if test="devNum != null">
+            and devNum = #{devNum}
+         </if>
+          <if test="status != null and status != ''">
+            and status = #{status}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+   
+  <!-- 查找数量 --> 
+  <select id="check" resultType="int" parameterType="java.util.Map">
+    select count(id) from dev_auth
+     <trim prefix="where" prefixOverrides="and | or">
+      <if test="devNum != null" >
+        and devNum = #{devNum,jdbcType=VARCHAR}
+      </if>
+      <if test="agentId != null" >
+        and agentId = #{agentId,jdbcType=INTEGER}
+      </if>
+      <if test="status != null and status != ''">
+            and status = #{status}
+      </if>
+      <if test="id != null" >
+        and id != #{id,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </select>
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from dev_auth where id = #{id,jdbcType=INTEGER} and status = 0
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from dev_auth where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach> 
+      and status = 0
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.DevAuth" >
+    insert into dev_auth
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        agentId,
+        status,
+        devNum
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{agent.id,jdbcType=INTEGER},
+        #{status,jdbcType=INTEGER},
+        #{devNum,jdbcType=VARCHAR}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.DevAuth" >
+      update dev_auth
+      <set>
+          <if test="agent !=null and agent.id != null" >
+              agentId = #{agent.id,jdbcType=INTEGER},
+          </if>
+          <if test="status != null" >
+              status = #{status,jdbcType=INTEGER},
+          </if>
+          <if test="devNum != null and devNum != ''" >
+              devNum = #{devNum,jdbcType=VARCHAR}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!--更新状态--> 
+  <update id="updateStatus">
+      update dev_auth set status = #{status,jdbcType=INTEGER}  where agentId = #{agentId,jdbcType=INTEGER} and devNum = #{devNum,jdbcType=VARCHAR}
+  </update>
+  
+   <!--根据agentId查询-->
+  <select id="findDevAuthByAgentId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+      select <include refid="Base_Column_List" /> from dev_auth where agentId = #{agent.id,jdbcType=INTEGER}
+  </select>
+	
+</mapper>

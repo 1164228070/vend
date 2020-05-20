@@ -1,0 +1,20 @@
+package com.haiyi.service;
+
+import com.github.pagehelper.PageInfo;
+import com.haiyi.domain.Product;
+import com.haiyi.domain.vo.ProductVo;
+import com.haiyi.query.ProductQuery;
+
+import java.util.List;
+
+public interface ProductService{
+	PageInfo<Product> findBySelective(ProductQuery e);
+
+	Product findById(Integer productId);
+
+	List<Product> findByOrderNums(String devNum,Integer [] orderNums);
+
+	int updateStoreCount(Product product);
+	
+	ProductVo findDetailById(Integer productId);
+}

@@ -1,0 +1,18 @@
+package com.haiyi.service.impl;
+
+import com.haiyi.dao.ComsumeDetailMapper;
+import com.haiyi.domain.ComsumeDetail;
+import com.haiyi.query.ComsumeDetailQuery;
+import com.haiyi.service.ComsumeDetailService;
+import com.haiyi.service.base.impl.BaseServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ComsumeDetailServiceImpl extends BaseServiceImpl<ComsumeDetail, ComsumeDetailQuery> implements ComsumeDetailService{
+
+	@Autowired
+	public void setComsumeDetailMapper(ComsumeDetailMapper comsumeDetailMapper){
+		this.daoMapper = comsumeDetailMapper;
+	}
+}

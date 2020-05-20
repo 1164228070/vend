@@ -1,0 +1,53 @@
+package com.haiyi.domain;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.haiyi.domain.base.BaseDomain;
+import com.maizi.anno.ClassInfoAnno;
+import com.maizi.anno.FilterInfoAnno;
+/**
+  * 
+  * @ClassName: Dict
+  * @Company: 麦子科技
+  * @Description: Dict实体
+  * @author 技术部-谢维乐
+  * @date 2016年5月1日 下午1:38:35
+  *
+ */
+@ClassInfoAnno(msg="字典",resourceId="id",dbId = "id")
+@FilterInfoAnno(fields = {""},sorts={""})
+public class Dict extends BaseDomain {
+    //名称
+    private String name;                                      
+     //类型
+    private Integer type;                                    
+    //备注
+    private String note;
+    
+    private List<DictVal> dictVals = new ArrayList<DictVal>();
+    
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Integer getType() {
+		return type;
+	}
+	public void setType(Integer type) {
+		this.type = type;
+	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
+	public List<DictVal> getDictVals() {
+		return dictVals;
+	}
+	public void setDictVals(List<DictVal> dictVals) {
+		this.dictVals = dictVals;
+	}   
+}

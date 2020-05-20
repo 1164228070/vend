@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.DevAuthMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.DevAuth" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="userId" property="userId" jdbcType="INTEGER" />
+      <result column="status" property="status" jdbcType="INTEGER" />
+      <result column="devNum" property="devNum" jdbcType="VARCHAR" />
+      <result column="ip" property="ip" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      userId,
+      userName,
+      status,
+      devNum,
+      ip
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from dev_auth where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="findDevAuthByDevNum" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from dev_auth where devNum = #{devNum,jdbcType=VARCHAR}
+  </select>
+
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.DevAuthQuery">
+      select <include refid="Base_Column_List" /> from dev_auth
+      <trim prefix="where" prefixOverrides="and |or ">
+          <if test="userId != null and userId != ''">
+              and userId = #{userId}
+          </if>
+          <if test="userName != null and userName != ''">
+              and userName = #{userName}
+          </if>
+          <if test="status != null and status != ''">
+              and status = #{status}
+          </if>
+          <if test="devNum != null and devNum != ''">
+              and devNum = #{devNum}
+          </if>
+          <if test="ip != null and ip != ''">
+              and ip = #{ip}
+          </if>
+      </trim>
+      order by id DESC
+  </select>
+   
+  <!-- 查找数量 --> 
+  <select id="check" resultType="int" parameterType="java.util.Map">
+    select count(id) from dev_auth
+     <trim prefix="where" prefixOverrides="and | or">
+      <if test="devNum != null" >
+        and devNum = #{devNum,jdbcType=VARCHAR}
+      </if>
+      <if test="ip != null" >
+        and ip = #{ip,jdbcType=VARCHAR}
+      </if>
+      <if test="userName != null" >
+        and userName = #{userName,jdbcType=VARCHAR}
+      </if>
+      <if test="userId != null" >
+        and userId = #{userId,jdbcType=INTEGER}
+      </if>
+      <if test="status != null and status != ''">
+            and status = #{status}
+      </if>
+      <if test="id != null" >
+        and id != #{id,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </select>
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from dev_auth where id = #{id,jdbcType=INTEGER} and status = 2
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from dev_auth where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach> 
+      and status = 2
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.DevAuth" >
+    insert into dev_auth
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        <if test="userId != null" >
+            userId,
+        </if>
+        <if test="userName != null" >
+            userName,
+        </if>
+        status,
+        devNum,
+        <if test="devIP != null" >
+            ip,
+        </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        <if test="userId != null" >
+            #{userId,jdbcType=INTEGER},
+        </if>
+        <if test="userName != null" >
+            #{userName,jdbcType=VARCHAR},
+        </if>
+        #{status,jdbcType=INTEGER},
+        #{devNum,jdbcType=VARCHAR},
+        <if test="devIP != null" >
+            #{devIP.ip,jdbcType=VARCHAR},
+        </if>
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.DevAuth" >
+      update dev_auth
+      <set>
+          <if test="userId !=null and userId != null" >
+              userId = #{userId,jdbcType=INTEGER},
+          </if>
+          <if test="userName !=null and userName != null" >
+              userName = #{userName,jdbcType=VARCHAR},
+          </if>
+          <if test="status != null" >
+              status = #{status,jdbcType=INTEGER},
+          </if>
+          <if test="devNum != null and devNum != ''" >
+              devNum = #{devNum,jdbcType=VARCHAR}
+          </if>
+
+          <if test="devIP != null" >
+              ip = #{devIP.ip,jdbcType=VARCHAR},
+          </if>
+
+<!--          <if test="ip != null and ip != ''" >
+              ip = #{ip,jdbcType=VARCHAR}
+          </if>-->
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!--更新状态--> 
+  <update id="updateStatus">
+      update dev_auth set status = #{status,jdbcType=INTEGER}  where  devNum = #{devNum,jdbcType=VARCHAR}
+  </update>
+  <!--更新状态-->
+  <update id="updateUserNull">
+      update dev_auth set userName = null and userId = null  where  devNum = #{devNum,jdbcType=VARCHAR}
+  </update>
+
+   <!--根据userId查询-->
+  <select id="findDevAuthByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+      select <include refid="Base_Column_List" /> from dev_auth where userId = #{user.id,jdbcType=INTEGER}
+  </select>
+
+    <!--单个修改支付模式-->
+    <update id="updateIPById">
+        update dev_auth set ip = #{ip} where id = #{id}
+    </update>
+	
+</mapper>

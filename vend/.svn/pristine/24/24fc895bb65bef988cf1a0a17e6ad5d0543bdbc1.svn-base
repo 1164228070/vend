@@ -1,0 +1,21 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+
+
+<meta http-equiv="pragma" content="no-cache"> 
+<meta http-equiv="cache-control" content="no-cache"> 
+<meta http-equiv="expires" content="0">   
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+
+<!-- 重置样式 -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/reset.css" />
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/public.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/js/swiper/swiper.min.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/home.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/widget.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/swift.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/style/css/app.css" />
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/js/layer/skin/layer.css" />

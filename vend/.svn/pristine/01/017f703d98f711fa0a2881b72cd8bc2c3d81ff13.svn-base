@@ -1,0 +1,52 @@
+package com.haiyi.controller;
+
+import freemarker.core.ArithmeticEngine;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.TreeMap;
+
+@Controller
+@RequestMapping("/pays")
+public class PayController {
+
+	private String WX_PAY="pays/wx_pay";
+
+	//支付界面
+    private String WEB_PAY_WAY_UI="pays/web_way";
+
+    /**
+     * 转发到支付界面
+     * @param modelMap
+     * @param orderNum
+     * @param devNum
+     * @return
+     */
+    @RequestMapping(value = "/devs/{devNum}/products/{orderNum}/way",method=RequestMethod.GET)
+    public String index(ModelMap modelMap,@PathVariable Integer orderNum,@PathVariable String devNum){
+        modelMap.addAttribute("orderNum",orderNum);
+        modelMap.addAttribute("devNum",devNum);
+        return WEB_PAY_WAY_UI;
+    }
+
+   /**
+    * 微信授权
+    * @param modelMap
+    * @return
+    */
+   @RequestMapping(value = "/code",method=RequestMethod.GET)
+   public String WXAuth(ModelMap modelMap,@RequestParam String code,@RequestParam("state") String orderId){
+	   modelMap.addAttribute("code",code);
+	   //orderId为订单id
+	   modelMap.addAttribute("orderId",orderId);
+	   //重定向到下单界面
+	   return WX_PAY;
+   }
+}

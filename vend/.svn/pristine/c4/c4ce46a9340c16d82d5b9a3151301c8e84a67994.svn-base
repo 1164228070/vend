@@ -1,0 +1,28 @@
+package com.haiyi.dao;
+import java.util.List;
+import java.util.Map;
+
+import com.haiyi.domain.ComsumeDetail;
+import org.apache.ibatis.annotations.Param;
+
+import com.haiyi.dao.base.BaseDao;
+import com.haiyi.domain.ComsumeLog;
+import com.haiyi.domain.vo.OrderMonthStasticVO;
+import com.haiyi.query.ComsumeLogQuery;
+import com.maizi.exception.KPException;
+public interface ComsumeLogMapper extends BaseDao<ComsumeLog,ComsumeLogQuery> {
+	
+	ComsumeLog findByOrderId(@Param("orderId") String orderId);
+	
+    Map<String,Object> findLastComsumeLogByPayStatus(@Param("num")String num,@Param("payStatus")Byte payStatus);
+    
+    int updateStatus(@Param("orderId") String orderId,@Param("payStatus") Byte payStatus) throws KPException;
+
+	List<OrderMonthStasticVO> queryMonthStatistic(String date);
+	
+	List<Map<String,Object>> payTypeChart(Map<String,Object> param);
+
+	List<Map<String, Object>> findDaySummaryInfo(@Param("agentId") Integer agentId,@Param("currentDay") String currentDay);
+
+    List<Map<String,Object>> findUnOutputedInfo(String orderId);
+}

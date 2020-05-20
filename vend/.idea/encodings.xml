@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/adminWeb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/agentWeb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apiWeb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/baseWXWeb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/commom" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/daoSupport" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/publicPom" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wapApp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wapApp" charset="UTF-8" />
+  </component>
+</project>

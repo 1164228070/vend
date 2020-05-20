@@ -1,0 +1,16 @@
+package com.haiyi.service;
+
+import java.math.BigDecimal;
+
+import com.haiyi.domain.Agent;
+
+public interface AgentService {
+	public Agent login(String loginName, String password);
+	
+	public int updateNumber(Agent agent);
+	
+	public int updateLeftMoney(BigDecimal changeMoney, Integer agentId);
+
+    Agent findByOrderId(String orderId);
+    Agent findById(Integer agentId);
+}

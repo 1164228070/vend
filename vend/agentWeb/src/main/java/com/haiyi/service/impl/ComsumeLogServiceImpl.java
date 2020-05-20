@@ -1,0 +1,41 @@
+package com.haiyi.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.haiyi.dao.ComsumeLogMapper;
+import com.haiyi.domain.ComsumeLog;
+import com.haiyi.domain.vo.OrderMonthStasticVO;
+import com.haiyi.query.ComsumeLogQuery;
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.service.base.impl.BaseServiceImpl;
+
+@Service
+public class ComsumeLogServiceImpl extends BaseServiceImpl<ComsumeLog, ComsumeLogQuery> implements ComsumeLogService{
+
+	@Autowired
+	public void setComsumeLogMapper(ComsumeLogMapper comsumeLogMapper){
+		this.daoMapper = comsumeLogMapper;
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public List<OrderMonthStasticVO> queryMonthStatistic(String date) {
+		return ((ComsumeLogMapper)this.daoMapper).queryMonthStatistic(date);
+	}
+
+	@Override
+	public List<Map<String,Object>> payTypeChart(Map<String, Object> param) {
+		return ((ComsumeLogMapper)this.daoMapper).payTypeChart(param);
+	}
+
+	@Override
+	public List<Map<String, Object>> findDaySummaryInfo( String currentDay) {
+		return ((ComsumeLogMapper)this.daoMapper).findDaySummaryInfo(currentDay);
+	}
+}

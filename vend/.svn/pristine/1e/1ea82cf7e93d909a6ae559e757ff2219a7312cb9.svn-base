@@ -1,0 +1,71 @@
+package com.haiyi.controller;
+
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.utils.SignUtil;
+import com.haiyi.utils.XmlUtils;
+import com.maizi.utils.LogUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/callback")
+public class CallbackController {
+
+	@Autowired
+	ComsumeLogService comsumeLogService;
+
+	/**
+	 * 微信支付异步通知
+	 * @param req
+	 * @param resp
+	 * @return
+	 */
+	@RequestMapping(value = "/wx/notification", method = RequestMethod.POST)
+	public void nofificationWXPay(HttpServletRequest req, HttpServletResponse resp){
+		try {
+			req.setCharacterEncoding("utf-8");
+		resp.setCharacterEncoding("utf-8");
+		resp.setHeader("Content-type", "text/html;charset=UTF-8");
+
+		String resString = XmlUtils.parseRequst(req);
+		LogUtils.logInfo("请求的内容：" + resString);
+
+		String respString = "error";
+		if(resString != null && !"".equals(resString)){
+			Map<String,String> map = XmlUtils.toMap(resString.getBytes(), "utf-8");
+			String res = XmlUtils.toXml(map);
+			String sign_type = map.get("sign_type");
+			String reSign = map.get("sign");
+			LogUtils.logInfo("请求的内容：" + res);
+
+			if(map.containsKey("sign")){
+				if(!SignUtil.verifySign(reSign, sign_type, map)){
+					res = "验证签名不通过";
+					respString = "error";
+					LogUtils.logInfo("请求的内容2：" + res);
+				}else{
+					String status = map.get("status");
+					if(status != null && "0".equals(status)){
+						String result_code = map.get("result_code");
+						if(result_code != null && "0".equals(result_code)){
+							//TODO 业务处理
+							respString = comsumeLogService.nofificationWXPay(map);
+						}
+					}
+				}
+			}
+		}
+		resp.getWriter().write(respString);
+		} catch (Exception e) {
+			LogUtils.logError("操作失败，原因：",e);
+		}
+	}
+}

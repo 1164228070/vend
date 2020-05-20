@@ -1,0 +1,32 @@
+package com.haiyi.service;
+
+import com.haiyi.domain.Dev;
+import com.haiyi.domain.ProductGroup;
+import com.haiyi.query.DevQuery;
+
+import java.util.List;
+import java.util.Map;
+
+public interface DevService{
+	
+	Dev devLoginInfo(Integer agentId);
+	
+	Dev devLoginInfoByObtain(Integer agentId);
+
+	int updateObtain(Integer devId, Integer obtain);
+	
+	List<Dev> findBySelective(DevQuery devQuery);
+	
+	Map<String,Object> getPayInfo(Integer productId);
+	
+	Dev findById(Integer devId);
+
+	//login
+	Dev login(String devNum,String token);
+	
+	List<ProductGroup> findProductGroup(String devNum);
+	
+	int productCount(Integer id);
+
+	Dev findByNum(String devNum);
+}

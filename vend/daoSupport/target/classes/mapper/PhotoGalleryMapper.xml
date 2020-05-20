@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.PhotoGalleryMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.PhotoGallery" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="photoName" property="photoName" jdbcType="VARCHAR" />
+      <result column="img" property="img" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      photoName,
+      img
+  </sql>
+
+  <!--根据Id查询-->
+  <select id="findAll" resultMap="BaseResultMap"  >
+      select <include refid="Base_Column_List" /> from photoGallery
+  </select>
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from photoGallery where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  
+   <!--多条件查询-->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.PhotoGalleryQuery">
+    select <include refid="Base_Column_List" /> from photoGallery
+    <trim prefix="where" prefixOverrides="and |or ">
+        <if test="photoName != null and photoName != ''">
+            <bind name="likeName" value="'%' + _parameter.photoName + '%'" />
+            and photoName like #{likeName,jdbcType=VARCHAR}
+        </if>
+    </trim>
+    order by id DESC
+</select>
+
+<!--    <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.PhotoGalleryQuery">
+        select <include refid="Base_Column_List" /> from photoGallery
+    </select>-->
+
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from photoGallery where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from photoGallery where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.PhotoGallery" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+    insert into photoGallery
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        photoName,
+        img
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{photoName,jdbcType=VARCHAR},
+        #{img,jdbcType=VARCHAR}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.PhotoGallery" >
+      update photoGallery
+      <set>
+          <if test="photoName != null and photoName != ''" >
+              photoName = #{photoName,jdbcType=VARCHAR},
+          </if>
+          <if test="img != null and img != ''" >
+              img = #{img,jdbcType=VARCHAR},
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+
+	
+</mapper>

@@ -1,0 +1,33 @@
+package com.haiyi.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.haiyi.dao.ProductMapper;
+import com.haiyi.domain.Product;
+import com.haiyi.domain.vo.ProductVo;
+import com.haiyi.query.ProductQuery;
+import com.haiyi.service.ProductService;
+import com.haiyi.service.base.impl.BaseServiceImpl;
+import com.maizi.exception.KPException;
+
+@Service
+public class ProductServiceImpl extends BaseServiceImpl<Product, ProductQuery> implements ProductService{
+
+	@Autowired
+	public void setProductMapper(ProductMapper productMapper){
+		this.daoMapper = productMapper;
+	}
+	
+	@Override
+	public int updateById(Product t) throws KPException {
+		//商品组不能修改
+		t.setProductGroup(null);
+		return super.updateById(t);
+	}
+
+	@Override
+	public ProductVo findDetailById(Integer productId) {
+		return ((ProductMapper)this.daoMapper).findDetailById(productId);
+	}
+}

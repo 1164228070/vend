@@ -1,0 +1,62 @@
+package com.haiyi.netty.packet;
+
+import com.haiyi.netty.packet.util.BasePacket;
+import com.haiyi.netty.packet.util.Command;
+
+import java.math.BigDecimal;
+import java.util.Map;
+/**
+ * 锁响应数据包
+ * @author Administrator
+ *
+ */
+public class LockResponsePacket extends BasePacket {
+    private String msg;
+    private boolean success;
+    private String devNum;
+    private String lock;
+
+    private Map<String,Object> data;
+
+    public Map<String, Object> getData() {
+        return data;
+    }
+
+    public void setData(Map<String, Object> data) {
+        this.data = data;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+    public boolean isSuccess() {
+        return success;
+    }
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public String getDevNum() {
+        return devNum;
+    }
+
+    public void setDevNum(String devNum) {
+        this.devNum = devNum;
+    }
+
+    public String getLock() {
+        return lock;
+    }
+
+    public void setLock(String lock) {
+        this.lock = lock;
+    }
+
+    @Override
+    public Byte getCommand() {
+        return Command.LOCK_RESPONSE;
+    }
+}

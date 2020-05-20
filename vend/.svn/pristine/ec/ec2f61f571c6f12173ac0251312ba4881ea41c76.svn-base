@@ -1,0 +1,29 @@
+package com.haiyi.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.haiyi.dao.ProductGroupMapper;
+import com.haiyi.domain.ProductGroup;
+import com.haiyi.query.ProductGroupQuery;
+import com.haiyi.service.ProductGroupService;
+
+@Service
+public class ProductGroupServiceImpl implements ProductGroupService {
+
+	@Autowired
+	ProductGroupMapper productGroupMapper;
+
+	@Override
+	public PageInfo<ProductGroup> findBySelective(ProductGroupQuery e) {
+		if (e.isPagination()) {
+			PageHelper.startPage(e.getPageStart(), e.getPageSize());
+			Page<ProductGroup> list = (Page<ProductGroup>) productGroupMapper.findBySelective(e);
+			return list.toPageInfo();
+		}
+		return new PageInfo<>(productGroupMapper.findBySelective(e));
+	}
+}

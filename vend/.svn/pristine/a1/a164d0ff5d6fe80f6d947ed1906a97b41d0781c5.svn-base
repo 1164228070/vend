@@ -1,0 +1,112 @@
+package com.haiyi.domain;
+
+import com.haiyi.domain.base.BaseDomain;
+import com.maizi.anno.ClassInfoAnno;
+import com.maizi.anno.FilterInfoAnno;
+import java.math.BigDecimal;
+/**
+  * 
+  * @ClassName: ComsumeDetail
+  * @Company: 麦子科技
+  * @Description: ComsumeDetail实体
+  * @author 技术部-刘强峰
+  * @date 2016年5月1日 下午1:38:35
+  *
+ */
+@ClassInfoAnno(msg="消费明细",resourceId="id",dbId = "id")
+@FilterInfoAnno(fields = {""},sorts={""})
+public class ComsumeDetail extends BaseDomain {
+    //订单Id
+    private String orderId;                                      
+    //商品Id
+    private String refere;
+
+    //货道
+    private Integer orderNum;
+
+    //商品名字
+    private String productName;                                      
+     //购买数量
+    private Integer buyCount;                                    
+    //原价
+    private BigDecimal oriPrice;  
+    //现价
+    private BigDecimal price;  
+    //支付金额
+    private BigDecimal payAmount;
+
+    //出货数量
+    private Integer outputCount;
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getRefere() {
+        return refere;
+    }
+
+    public void setRefere(String refere) {
+        this.refere = refere;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Integer getBuyCount() {
+        return buyCount;
+    }
+
+    public void setBuyCount(Integer buyCount) {
+        this.buyCount = buyCount;
+    }
+
+    public BigDecimal getOriPrice() {
+        return oriPrice;
+    }
+
+    public void setOriPrice(BigDecimal oriPrice) {
+        this.oriPrice = oriPrice;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public BigDecimal getPayAmount() {
+        return payAmount;
+    }
+
+    public void setPayAmount(BigDecimal payAmount) {
+        this.payAmount = payAmount;
+    }
+
+    public Integer getOutputCount() {
+        return outputCount;
+    }
+
+    public void setOutputCount(Integer outputCount) {
+        this.outputCount = outputCount;
+    }
+
+    public Integer getOrderNum() {
+        return this.orderNum;
+    }
+
+    public void setOrderNum(final Integer orderNum) {
+        this.orderNum = orderNum;
+    }
+}

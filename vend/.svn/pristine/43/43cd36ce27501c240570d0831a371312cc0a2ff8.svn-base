@@ -1,0 +1,9 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<!-- 主导航 start -->
+<div class="table-type fixed-footer text-center pt5 pb5" id="nav-bottom">
+	<a class="tbl-cell i-home text-center on" href="${pageContext.request.contextPath}/">主页</a>
+	<a class="tbl-cell i-follow text-center" href="${pageContext.request.contextPath}/favorites">关注</a>
+	<a class="tbl-cell i-find text-center" href="${pageContext.request.contextPath}/yueBas">约吧</a>
+	<a class="tbl-cell i-my text-center" href="${pageContext.request.contextPath}/members/center">我的</a>
+</div>
+<!-- 主导航 end --> 

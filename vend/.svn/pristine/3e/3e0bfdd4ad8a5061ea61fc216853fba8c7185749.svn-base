@@ -1,0 +1,61 @@
+package com.haiyi.netty.server.handler;
+
+import com.haiyi.domain.Dev;
+import com.haiyi.netty.packet.BalancePacket;
+import com.haiyi.netty.packet.BalancePacket;
+import com.haiyi.netty.packet.BalanceResponsePacket;
+import com.haiyi.netty.server.handler.auth.Session;
+import com.haiyi.netty.server.handler.auth.SessionUtil;
+import com.haiyi.netty.utils.LoginUtil;
+import com.haiyi.service.DevService;
+import com.haiyi.service.MemberService;
+import com.haiyi.service.impl.MemberServiceImpl;
+import com.haiyi.utils.SpringUtil;
+import com.maizi.utils.LogUtils;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+//1. 加上注解标识，表明该 handler 是可以多个 channel 共享的
+@ChannelHandler.Sharable
+public class BalanceHandle extends SimpleChannelInboundHandler<BalancePacket>{
+
+    private static final BalanceHandle carWashCostHandle = new BalanceHandle();
+    private BalanceHandle() {
+    }
+
+    public static BalanceHandle getInstance() {
+        return carWashCostHandle;
+    }
+
+    /**
+     * 当消息到达时
+     */
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, BalancePacket balancePacket) throws Exception {
+        LogUtils.logInfo("收到客户端[{}]余额请求",balancePacket.getAccount());
+
+        balancePacket.getAccount();
+
+        //调用Service
+        MemberService memberService =   SpringUtil.getBean("memberServiceImpl");
+        //推送余额
+
+
+        BalanceResponsePacket larBalanceResponsePacket = new BalanceResponsePacket();
+        larBalanceResponsePacket.setVersion(balancePacket.getVersion());
+        larBalanceResponsePacket.setSuccess(true);
+        larBalanceResponsePacket.setMsg("推送成功");
+        //TODO
+        // 登录响应
+        ctx.channel().writeAndFlush(larBalanceResponsePacket);
+    }
+
+
+
+
+}

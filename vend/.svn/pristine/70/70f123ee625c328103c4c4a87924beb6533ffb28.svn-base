@@ -1,0 +1,12 @@
+package com.haiyi.dao;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.haiyi.dao.base.BaseDao;
+import com.haiyi.domain.DevAuth;
+import com.haiyi.query.DevAuthQuery;
+public interface DevAuthMapper extends BaseDao<DevAuth,DevAuthQuery> {
+	List<DevAuth> findDevAuthByAgentId(Integer agentId);
+	int updateStatus(@Param("status") Integer status,@Param("agentId")Integer agentId,@Param("devNum") String devNum);
+}

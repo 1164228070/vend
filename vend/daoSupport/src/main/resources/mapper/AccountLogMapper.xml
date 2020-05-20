@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.AccountLogMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.AccountLog" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="accountLog" property="accountLog" jdbcType="VARCHAR" />
+      <result column="memberId" property="memberId" jdbcType="INTEGER" />
+      <result column="memberName" property="memberName" jdbcType="VARCHAR" />
+      <result column="moneyType" property="moneyType" jdbcType="TINYINT" />
+      <result column="money" property="money" jdbcType="DECIMAL" />
+      <result column="dataSrc" property="dataSrc" jdbcType="VARCHAR" />
+      <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+      <result column="tradeType" property="tradeType" jdbcType="TINYINT" />
+      <result column="comsumeLog" property="comsumeLog" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      accountLog,
+      memberId,
+      memberName,
+      moneyType,
+      money,
+      dataSrc,
+      createDate,
+      tradeType,
+      comsumeLog
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from account_log where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.AccountLogQuery">
+      select <include refid="Base_Column_List" /> from account_log
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="memberId != null">
+            and memberId = #{memberId,jdbcType=INTEGER}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from account_log where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from account_log where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.AccountLog" >
+    insert into account_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        accountLog,
+        memberId,
+        memberName,
+        moneyType,
+        money,
+        dataSrc,
+        createDate,
+        tradeType,
+        comsumeLog
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{accountLog,jdbcType=VARCHAR},
+        #{memberId,jdbcType=INTEGER},
+        #{memberName,jdbcType=VARCHAR},
+        #{moneyType,jdbcType=TINYINT},
+        #{money,jdbcType=DECIMAL},
+        #{dataSrc,jdbcType=VARCHAR},
+        #{createDate,jdbcType=TIMESTAMP},
+        #{tradeType,jdbcType=TINYINT},
+        #{comsumeLog,jdbcType=VARCHAR}
+    </trim>
+  </insert>
+</mapper>

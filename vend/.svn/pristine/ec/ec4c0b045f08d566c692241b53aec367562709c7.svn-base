@@ -1,0 +1,35 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/swiper/swiper.jquery.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/public.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/tip.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/layer/layer.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/validator/jquery.validate.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/validator/my-additional-methods.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/validator/localization/messages_zh.min.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.base64.js"></script>
+
+<!-- 常用工具栏 -->
+<script src="${pageContext.request.contextPath}/static/utils/ajax.js"></script>
+<script src="${pageContext.request.contextPath}/static/utils/request.js"></script>
+<script src="${pageContext.request.contextPath}/static/utils/common.js"></script>
+<script src="${pageContext.request.contextPath}/static/utils/util.js"></script>
+<script type="text/javascript">
+    $.validator.setDefaults({
+    	showErrors: function(map, errorList) {
+		    var msg = "";   
+		    if(errorList.length>0){
+	    		errorList[0].element.focus();   
+		    	msg = errorList[0].message;
+		    	$.tip.alert(2,msg,2000);
+		    }  
+    	},    
+    }); 
+	common.contextPath = '${pageContext.request.contextPath}';
+	common.JSONPContextPath = 'http://www.peshion.com/apiWeb';
+	common.imageServer="http://118.190.52.54:9090/images/";
+</script>
+

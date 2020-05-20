@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.RoleMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.Role" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="agentId" property="agentId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      name,
+      agentId
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from t_role where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.RoleQuery">
+      select <include refid="Base_Column_List" /> from t_role
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="keyWords != null and keyWords != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.keyWords + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+         <if test="agentId != null and agentId != ''">
+            and agentId = #{agentId,jdbcType=VARCHAR}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from t_role where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from t_role where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.Role" >
+    insert into t_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        name,
+        agentId
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR},
+        #{agentId,jdbcType=INTEGER}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.Role" >
+      update t_role
+      <set>
+          <if test="name != null and name != ''" >
+              name = #{name,jdbcType=VARCHAR}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findIdsByUserId" resultType="INTEGER" parameterType="INTEGER">
+      select r.id from t_role r,t_user_role m where r.id = m.roleId and m.userId=#{userId}
+  </select>
+  
+  <!-- 解绑 -->
+  <delete id="unbind" parameterType="INTEGER" >
+      delete from t_user_role where userId = #{userId,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 绑定 -->
+  <insert id="bind">
+    insert into t_user_role (roleId,userId) VALUES 
+    <foreach collection ="roleIds" item="item" separator =",">
+         (#{item},#{userId})
+    </foreach >
+  </insert>
+</mapper>

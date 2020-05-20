@@ -1,0 +1,95 @@
+package com.haiyi.controller;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.github.pagehelper.PageInfo;
+import com.haiyi.domain.OrderAccount;
+import com.haiyi.query.OrderAccountQuery;
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.service.OrderAccountService;
+import com.haiyi.utils.AgentUtil;
+import com.maizi.anno.AuthAnno;
+import com.maizi.exception.KPException;
+import com.maizi.utils.DateUtil;
+import com.maizi.utils.JsonModel;
+/**
+ * 统计控制器
+ * @author Administrator
+ *
+ */
+@Controller
+@RequestMapping("/statistic")
+public class StatisticController{
+	@Autowired
+	OrderAccountService orderAccountService;
+	
+	@Autowired
+	ComsumeLogService comsumeLogService;
+
+	/**
+	 * 分页查询[返回JSON]
+	 * @param query
+	 * @return
+	 * @throws KPException
+	 */
+	@RequestMapping(value="/order", method=RequestMethod.GET, headers="X-Requested-With=XMLHttpRequest")
+	@AuthAnno(verifyLogin=true,verifyToken=false)
+	public @ResponseBody Map<String,Object> list(OrderAccountQuery query, HttpSession session) throws KPException{
+		Map<String,Object> result = new HashMap<String,Object>();
+		
+		Integer agentId = AgentUtil.getAgentId(session);
+		query.setAgentId(agentId+"");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH,-12);
+		
+		String start = DateUtil.dateToString(calendar.getTime(),"yyyy-MM");
+		query.setStart(start);
+		 
+		PageInfo<OrderAccount> results = orderAccountService.findBySelective(query);
+		 
+		List<Map<String,Object>> daySummaryInfo = comsumeLogService.findDaySummaryInfo(agentId,DateUtil.dateToString(new Date(),"yyyy-MM-dd"));
+		
+		result.put("success", true);
+		result.put("monthSummary", results.getList());
+		result.put("daySummary",daySummaryInfo);
+		return result;  
+	}
+	 
+	/**
+	 * 查询今日支付分布图
+	 * @param session
+	 * @return
+	 * @throws KPException
+	 */
+	@RequestMapping(value="/pay/type/chart", method=RequestMethod.GET, headers="X-Requested-With=XMLHttpRequest")
+	@AuthAnno(verifyToken=false)
+	public @ResponseBody JsonModel list(HttpSession session) throws KPException{
+		Integer agentId = AgentUtil.getAgentId(session);
+		
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("agentId",agentId);
+		//param.put("createDate",DateUtil.dateToString(DateUtil.getCurrentDate(),"yyyy-MM-dd"));
+		param.put("createDate","2018-07-18");
+		
+		List<Map<String,Object>> result = comsumeLogService.payTypeChart(param);
+		 
+		JsonModel jsonModel = new JsonModel();
+		jsonModel.setSuccess(true);
+		jsonModel.setData(result);
+		jsonModel.setMsg("查询支付比率成功");
+		return jsonModel;  
+	}
+}

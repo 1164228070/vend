@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.DevMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.Dev" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="num" property="num" jdbcType="INTEGER" />
+      <result column="shortNum" property="shortNum" jdbcType="INTEGER" />
+      <result column="token" property="token" jdbcType="INTEGER" />
+      <result column="agentName" property="agentName" jdbcType="VARCHAR" />
+      <result column="speed1" property="speed1" jdbcType="INTEGER" />
+      <result column="speed2" property="speed2" jdbcType="INTEGER" />
+      <result column="KD" property="KD" jdbcType="INTEGER" />
+      <result column="KD2" property="KD2" jdbcType="INTEGER" />
+      <result column="CSL" property="CSL" jdbcType="INTEGER" />
+      <result column="TF" property="TF" jdbcType="TINYINT" />
+      <result column="TFType" property="TFType" jdbcType="TINYINT" />
+      <result column="TBPercentage" property="TBPercentage" jdbcType="INTEGER" />
+      <result column="TFMS" property="TFMS" jdbcType="INTEGER" />
+      <result column="commodity" property="commodity" jdbcType="INTEGER" />
+      <result column="payType" property="payType" jdbcType="VARCHAR" />
+      <result column="tradeWay" property="tradeWay" jdbcType="INTEGER" />
+      <result column="Reserve1" property="Reserve1" jdbcType="INTEGER" />
+      <result column="Reserve2" property="Reserve2" jdbcType="INTEGER" />
+      <result column="Reserve3" property="Reserve3" jdbcType="INTEGER" />
+      <result column="Reserve4" property="Reserve4" jdbcType="INTEGER" />
+      <result column="state" property="state" jdbcType="INTEGER" />
+      <result column="agentId" property="agentId" jdbcType="INTEGER" />
+      <result column="Obtain" property="Obtain" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      name,
+      num,
+      shortNum,
+      token,
+      agentName,
+      speed1,
+      speed2,
+      KD,
+      KD2,
+      CSL,
+      TF,
+      TFType,
+      TBPercentage,
+      TFMS,
+      commodity,
+      payType,
+      tradeWay,
+      Reserve1,
+      Reserve2,
+      Reserve3,
+      Reserve4,
+      state,
+      agentId,
+      Obtain
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="Base_Column_List" /> from dev where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据Id数组查询 -->
+  <select id="findByIds" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="Base_Column_List" /> from dev where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </select>
+  
+  <!--根据设备编号查询-->
+  <select id="findByNumAndToken" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List" /> from dev where num = #{num,jdbcType=VARCHAR} and token = #{token,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getPayInfo" resultType="java.util.Map" parameterType="java.lang.Integer">
+      select v.payType,v.shortNum,v.num from productgroup g,dev v,product p where g.devId = v.id and g.id = p.productGroupId and p.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="devLoginInfo" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List" /> from dev where agentId = #{agentId,jdbcType=INTEGER} and state = #{status}
+  </select>
+  
+  <select id="devLoginInfoByObtain" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List" /> from dev where agentId = #{agentId,jdbcType=INTEGER} and Obtain = #{obtain}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.DevQuery">
+      select <include refid="Base_Column_List" /> from dev
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="agentId != null and agentId != ''">
+            and agentId = #{agentId}
+         </if>
+         <if test="num != null and num != ''">
+            and num = #{num}
+         </if>
+         <if test="shortNum != null and shortNum != ''">
+            and shortNum = #{shortNum}
+         </if>
+         <if test="state != null">
+            and state = #{state}
+         </if>
+         <if test="tokened">
+            and token is not null
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  <!-- 查找数量 --> 
+  <select id="count" resultType="int"  parameterType="java.util.Map">
+    select count(id) from dev
+     <trim prefix="where" prefixOverrides="and | or">
+      <if test="agentId != null" >
+        and agentId = #{agentId,jdbcType=INTEGER}
+      </if>
+      <if test="status != null" >
+        and state = #{status,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </select>
+  
+  <!-- 查找商品数量 --> 
+  <select id="productCount" resultType="int"  parameterType="java.util.Map">
+      select count(p.id) from dev d,productgroup g ,product p where d.id = g.devId and p.productGroupId = g.id and d.id  = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from dev where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from dev where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.Dev" >
+    insert into dev
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        name,
+        num,
+        shortNum,
+        <if test="token != null" >
+            token,
+        </if>
+        agentName,
+        speed1,
+        speed2,
+        KD,
+        KD2,
+        CSL,
+        TF,
+        TFType,
+        TBPercentage,
+        TFMS,
+        commodity,
+        <if test="payType != null" >
+            payType,
+        </if>
+        tradeWay,
+        Reserve1,
+        Reserve2,
+        Reserve3,
+        Reserve4,
+        <if test="state != null" >
+            state,
+        </if>
+        agentId,
+        <if test="Obtain != null" >
+            Obtain
+        </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{name,jdbcType=VARCHAR},
+        #{num,jdbcType=INTEGER},
+        #{shortNum,jdbcType=INTEGER},
+        <if test="token != null" >
+            #{token,jdbcType=INTEGER},
+        </if>
+        #{agentName,jdbcType=VARCHAR},
+        #{speed1,jdbcType=INTEGER},
+        #{speed2,jdbcType=INTEGER},
+        #{KD,jdbcType=INTEGER},
+        #{KD2,jdbcType=INTEGER},
+        #{CSL,jdbcType=INTEGER},
+        #{TF,jdbcType=TINYINT},
+        #{TFType,jdbcType=TINYINT},
+        #{TBPercentage,jdbcType=INTEGER},
+        #{TFMS,jdbcType=INTEGER},
+        #{commodity,jdbcType=INTEGER},
+        <if test="payType != null" >
+            #{payType,jdbcType=VARCHAR},
+        </if>
+        #{tradeWay,jdbcType=INTEGER},
+        #{Reserve1,jdbcType=INTEGER},
+        #{Reserve2,jdbcType=INTEGER},
+        #{Reserve3,jdbcType=INTEGER},
+        #{Reserve4,jdbcType=INTEGER},
+        <if test="state != null" >
+            #{state,jdbcType=INTEGER},
+        </if>
+        #{agentId,jdbcType=INTEGER},
+        <if test="Obtain != null" >
+            #{Obtain,jdbcType=INTEGER}
+        </if>
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.Dev" >
+      update dev
+      <set>
+          <if test="name != null" >
+              name = #{name,jdbcType=VARCHAR},
+          </if>
+          <if test="num != null" >
+              num = #{num,jdbcType=INTEGER},
+          </if>
+          <if test="shortNum != null" >
+              shortNum = #{shortNum,jdbcType=INTEGER},
+          </if>
+          <if test="token != null" >
+              token = #{token,jdbcType=INTEGER},
+          </if>
+          <if test="agentName != null and agentName != ''" >
+              agentName = #{agentName,jdbcType=VARCHAR},
+          </if>
+          <if test="speed1 != null" >
+              speed1 = #{speed1,jdbcType=INTEGER},
+          </if>
+          <if test="speed2 != null" >
+              speed2 = #{speed2,jdbcType=INTEGER},
+          </if>
+          <if test="KD != null" >
+              KD = #{KD,jdbcType=INTEGER},
+          </if>
+          <if test="KD2 != null" >
+              KD2 = #{KD2,jdbcType=INTEGER},
+          </if>
+          <if test="CSL != null" >
+              CSL = #{CSL,jdbcType=INTEGER},
+          </if>
+          <if test="TF != null" >
+              TF = #{TF,jdbcType=TINYINT},
+          </if>
+          <if test="TFType != null" >
+              TFType = #{TFType,jdbcType=TINYINT},
+          </if>
+          <if test="TBPercentage != null" >
+              TBPercentage = #{TBPercentage,jdbcType=INTEGER},
+          </if>
+          <if test="TFMS != null" >
+              TFMS = #{TFMS,jdbcType=INTEGER},
+          </if>
+          <if test="commodity != null" >
+              commodity = #{commodity,jdbcType=INTEGER},
+          </if>
+          <if test="payType != null" >
+              payType = #{payType,jdbcType=VARCHAR},
+          </if>
+          <if test="tradeWay != null" >
+              tradeWay = #{tradeWay,jdbcType=INTEGER},
+          </if>
+          <if test="Reserve1 != null" >
+              Reserve1 = #{Reserve1,jdbcType=INTEGER},
+          </if>
+          <if test="Reserve2 != null" >
+              Reserve2 = #{Reserve2,jdbcType=INTEGER},
+          </if>
+          <if test="Reserve3 != null" >
+              Reserve3 = #{Reserve3,jdbcType=INTEGER},
+          </if>
+          <if test="Reserve4 != null" >
+              Reserve4 = #{Reserve4,jdbcType=INTEGER},
+          </if>
+          <if test="state != null" >
+              state = #{state,jdbcType=INTEGER},
+          </if>
+          <if test="agentId != null" >
+              agentId = #{agentId,jdbcType=INTEGER},
+          </if>
+          <if test="Obtain != null" >
+              Obtain = #{Obtain,jdbcType=INTEGER}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectDevNum" resultMap="BaseResultMap" parameterType="com.haiyi.query.DevQuery">
+      select num from dev
+  </select>
+
+
+
+</mapper>

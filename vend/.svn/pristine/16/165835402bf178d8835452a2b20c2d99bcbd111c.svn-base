@@ -1,0 +1,70 @@
+package com.haiyi.controller;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.haiyi.controller.base.BaseController;
+import com.haiyi.domain.ComsumeLog;
+import com.haiyi.query.ComsumeLogQuery;
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.utils.AgentUtil;
+import com.maizi.anno.AuthAnno;
+import com.maizi.anno.ControllerAnno;
+import com.maizi.exception.KPException;
+import com.maizi.utils.JsonModel;
+
+@Controller
+@RequestMapping("/comsumeLogs")
+@ControllerAnno(addUI = "/comsumeLogs/save", detailUI = "/comsumeLogs/detail", editUI = "/comsumeLogs/save", listUI = "/comsumeLogs/list")
+public class ComsumeLogController extends BaseController<ComsumeLog,ComsumeLogQuery>{
+	
+	@Autowired
+	public void setComsumeLogService(ComsumeLogService comsumeLogService) {
+		this.baseService = comsumeLogService;
+	}
+	
+	@Override
+	@AuthAnno
+	public Map<String, Object> list(ComsumeLogQuery e, HttpServletRequest request) throws KPException {
+		e.setAgentId(AgentUtil.getAgentId(request.getSession()));
+		return super.list(e, request);
+	}
+
+	
+	@AuthAnno(verifyValid=false)
+	@Override
+	public String add(ComsumeLog t, ModelMap modelMap) throws KPException {
+		return null;
+	}
+	 
+	@AuthAnno(verifyValid=false)
+	@Override
+	public JsonModel delete(String ids) {
+		return null;
+	}
+	
+	@AuthAnno(verifyValid=false)
+	@Override
+	public String edit(String id, ModelMap modelMap, ComsumeLog t) throws KPException {
+		return null;
+	}
+
+	@Override
+	public ComsumeLog beforeSave(ModelMap modelMap, ComsumeLog t) throws KPException {
+		return null;
+	}
+
+	@Override
+	public void beforeSaveUI(ModelMap modelMap, String id) throws KPException {
+	}
+
+	@Override
+	protected void beforeDelete(String[] ids) throws KPException {
+	}
+}

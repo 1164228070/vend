@@ -1,0 +1,89 @@
+package com.haiyi.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.maizi.anno.AuthAnno;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.haiyi.controller.base.BaseController;
+import com.haiyi.domain.Product;
+import com.haiyi.domain.ProductLog;
+import com.haiyi.query.ProductLogQuery;
+import com.haiyi.query.ProductQuery;
+import com.haiyi.service.ProductLogService;
+import com.haiyi.service.ProductService;
+import com.haiyi.utils.AgentUtil;
+import com.haiyi.utils.RequestUtil;
+import com.maizi.anno.ControllerAnno;
+import com.maizi.exception.ExceptionKind;
+import com.maizi.exception.KPException;
+import com.maizi.utils.StringUtil;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+@Controller
+@RequestMapping("/productLogs")
+@ControllerAnno(addUI = "/productLogs/save", detailUI = "/productLogs/detail", editUI = "/productLogs/save", listUI = "/productLogs/list")
+public class ProductLogController extends BaseController<ProductLog,ProductLogQuery>{
+	
+	@Autowired
+	ProductService productService;
+	
+	@Autowired
+	public void setProductLogService(ProductLogService productLogService) {
+		this.baseService = productLogService;
+	}
+	
+	@Override
+	public Map<String, Object> list(ProductLogQuery e, HttpServletRequest request) throws KPException {
+		e.setAgentId(AgentUtil.getAgentId(request.getSession()));
+		return super.list(e, request);
+	}
+
+	@Override
+	public ProductLog beforeSave(ModelMap modelMap, ProductLog t) throws KPException {
+		if(t.getId()!=null){
+			throw new KPException(ExceptionKind.PARAM_E,"商品记录不能为空");
+		}
+		Integer productId = t.getProductId();
+		if(productId==null){
+			throw new KPException(ExceptionKind.PARAM_E,"添加商品记录参数错误");
+		}
+		
+		Product product = productService.findById(productId+"");
+		
+		if(product ==null || !product.getAgentId().equals(AgentUtil.getAgentId(RequestUtil.getRequest().getSession()))){
+			throw new KPException(ExceptionKind.PARAM_E,"添加商品记录参数错误");
+		}
+		t.setName(product.getName());
+		t.setStoreCount(product.getStoreCount());
+		t.setProductNum(product.getProductNum());
+		t.setAgentId(product.getAgentId());
+		return t;
+	}
+
+	@Override
+	public void beforeSaveUI(ModelMap modelMap, String id) throws KPException {
+		if(!StringUtil.isEmpty(id)){
+			throw new KPException(ExceptionKind.ACCESS_E,"商品记录不能修改");
+		}else{
+			HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
+			//获取productId
+			String productId = request.getParameter("productId");
+			Product product = productService.findById(productId);
+			modelMap.addAttribute("product", product);
+		}
+	}
+
+	@Override
+	protected void beforeDelete(String[] ids) throws KPException {
+	}
+
+}

@@ -1,0 +1,70 @@
+package com.haiyi.utils;
+
+public class StatusConstant {
+	
+	//代理商状态
+	public static final byte AGENT_STATUS_NEW =0;          //新建
+	public static final byte AGENT_STATUS_VERIFIED =1;     //审核通过
+	public static final byte AGENT_STATUS_UNVERIFIED =-1;  //审核不同通过
+	public static final byte AGENT_STATUS_FORBIDDEN =-2;   //禁用
+	
+	//授权卡状态  0:未使用1:已使用 [用了之后不可逆]
+	public static final byte CARAUTH_STATUS_UNUSED =0;      //未使用
+	public static final byte CARAUTH_STATUS_USED =1;        //已使用
+	
+	//设备授权状态  0:未使用1:已使用 [用了之后不可逆]
+	public static final byte DEVAUTH_STATUS_UNUSED =0;      //未使用
+	public static final byte DEVAUTH_STATUS_USED =1;        //已使用
+	
+	public static final Integer DEV_STATUS_ONLINE =1;        //在线
+	public static final Integer DEV_STATUS_OFFLINE =2;       //离线
+
+	public static final Integer DEV_OBTAIN_OPEN=1;			//获取参数开关 1开启
+	public static final Integer DEV_OBTAIN_CLOSE=2;	        //获取参数开关 2停用
+	
+	//产品状态
+	public static final byte PRODUCT_STATUS_OFFLINE =0;        //下架
+	public static final byte PRODUCT_STATUS_ONLINE =1;         //上架
+	
+	//会员状态
+	public static final byte MEMBER_STATUS_DEACTIVATE =0;     //冻结
+	public static final byte MEMBER_STATUS_ACTIVE =1;         //激活
+	
+	//员工状态
+	public static final byte USER_STATUS_DEACTIVATE =0;       //冻结
+	public static final byte USER_STATUS_ACTIVE =1;           //激活
+	
+	//消费记录状态
+	public static final byte PAY_STATUS_PAYING =0;        //待支付
+	public static final byte PAY_STATUS_PAIED =1;         //已支付//相当于待发货
+	
+	public static final byte PAY_STATUS_FINISH =2;        //交易完成
+	
+	public static final byte PAY_STATUS_INVALID =3;       //无效(超时未支付)
+	public static final byte PAY_STATUS_ERROR =4;         //异常订单
+
+	//TODO
+	public static final byte PAY_STATUS_OUTING =5;         //出货中
+
+
+ 	
+	
+	//支付方式
+	public static final byte PAY_TYPE_CORN =1;                //金币
+	public static final byte PAY_TYPE_TICKET =2;              //彩票
+	public static final byte PAY_TYPE_SCORE =3;               //积分
+	public static final byte PAY_TYPE_DOOR_TICKET =4;         //门票
+	public static final byte PAY_TYPE_DOOR_YEAR =5;           //年票
+	public static final byte PAY_TYPE_WX =6;                  //微信
+	public static final byte PAY_TYPE_ZFV =7;                 //支付宝
+	
+	
+	//计数器类型
+	public static final byte COUNTING_TYPE_IN =1;             //进货
+	public static final byte COUNTING_TYPE_OUT =2;            //出货
+	
+	//提取状态
+	public static final byte CASH_APPLY_STATUS_WAITING =0;    //等待审核
+	public static final byte CASH_APPLY_STATUS_FAIL =1;       //失败
+	public static final byte CASH_APPLY_STATUS_SUCCESS =2;    //完成
+}

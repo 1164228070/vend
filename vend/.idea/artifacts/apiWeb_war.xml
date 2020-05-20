@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="apiWeb:war">
+    <output-path>$PROJECT_DIR$/apiWeb/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>apiWeb</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="apiWeb-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="apiWeb:war exploded" />
+    </root>
+  </artifact>
+</component>

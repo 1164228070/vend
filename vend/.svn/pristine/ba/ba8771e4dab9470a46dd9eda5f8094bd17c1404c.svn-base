@@ -1,0 +1,122 @@
+package com.haiyi.query;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+
+import com.haiyi.query.base.BaseQuery;
+import com.maizi.utils.DateUtil;
+public class ComsumeLogQuery extends BaseQuery{
+	
+	private static final String EXP = "^[1-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) 至 [1-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$";
+
+	private Integer memberId;
+	private Integer agentId;
+	private Byte payStatus;
+	
+	private String comsumeLog;
+	private String orderId;
+	private String devNum;
+	private String cardNum;
+	
+	private String start;
+	private String end;
+	 
+	private String createDateRange;
+	 
+	
+	public void setCreateDateRange(String createDateRange) {
+		try {
+			createDateRange = new String(createDateRange.getBytes("ISO8859-1"),"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		if(createDateRange.matches(EXP)){
+			String[] results = createDateRange.split(" 至 ");
+			if(results[0].compareTo(results[1])!=1){
+				start =  results[0];
+				end =  results[1];
+			}
+		}
+	}
+	  
+	public Integer getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(Integer memberId) {
+		this.memberId = memberId;
+	}
+
+	public Integer getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(Integer agentId) {
+		this.agentId = agentId;
+	}
+
+	public Byte getPayStatus() {
+		return payStatus;
+	}
+
+	public void setPayStatus(Byte payStatus) {
+		this.payStatus = payStatus;
+	}
+
+	public String getComsumeLog() {
+		return comsumeLog;
+	}
+
+	public void setComsumeLog(String comsumeLog) {
+		this.comsumeLog = comsumeLog;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getDevNum() {
+		return devNum;
+	}
+
+	public void setDevNum(String devNum) {
+		this.devNum = devNum;
+	}
+
+	public String getCardNum() {
+		return cardNum;
+	}
+
+	public void setCardNum(String cardNum) {
+		this.cardNum = cardNum;
+	}
+
+	public String getStart() {
+		return start;
+	}
+
+	public void setStart(String start) {
+		this.start = start;
+	}
+
+	public String getEnd() {
+		return end;
+	}
+
+	public void setEnd(String end) {
+		this.end = end;
+	}
+
+	@Override
+	public String getOrder() {
+		return null;
+	}
+
+	@Override
+	public void addQuery(String condition, Object... param) {
+	}
+}

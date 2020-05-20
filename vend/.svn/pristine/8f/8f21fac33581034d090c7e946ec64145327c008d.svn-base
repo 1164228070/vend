@@ -1,0 +1,74 @@
+package com.haiyi.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.haiyi.controller.base.BaseController;
+import com.haiyi.domain.Agent;
+import com.haiyi.domain.Dev;
+import com.haiyi.domain.ProductGroup;
+import com.haiyi.query.AgentQuery;
+import com.haiyi.query.DevQuery;
+import com.haiyi.query.ProductGroupQuery;
+import com.haiyi.service.AgentService;
+import com.haiyi.service.DevService;
+import com.haiyi.service.ProductGroupService;
+import com.haiyi.utils.ErrorTemplate;
+import com.haiyi.utils.StatusConstant;
+import com.maizi.anno.ControllerAnno;
+import com.maizi.exception.ExceptionKind;
+import com.maizi.exception.KPException;
+import com.maizi.utils.StringUtil;
+
+@Controller
+@RequestMapping("/productGroups")
+@ControllerAnno(addUI = "/productGroups/save", detailUI = "/productGroups/detail", editUI = "/productGroups/save", listUI = "/productGroups/list")
+public class ProductGroupController extends BaseController<ProductGroup,ProductGroupQuery>{
+	
+	@Autowired
+	AgentService agentService;
+	@Autowired
+	DevService devService;
+	
+	@Autowired
+	public void setProductGroupService(ProductGroupService productGroupService) {
+		this.baseService = productGroupService;
+	}
+
+	@Override
+	public ProductGroup beforeSave(ModelMap modelMap, ProductGroup t) throws KPException {
+		return t;
+	}
+
+	@Override
+	public void beforeSaveUI(ModelMap modelMap, String id) throws KPException {
+		
+		AgentQuery agentQuery = new AgentQuery();
+		agentQuery.setPagination(false);
+		agentQuery.setStatus(StatusConstant.AGENT_STATUS_VERIFIED);
+		//查找
+		List<Agent> agents = agentService.findBySelective(agentQuery).getList();
+		if(agents.isEmpty()){
+			throw new KPException(ExceptionKind.BUSINESS_E,ErrorTemplate.getError("当前平台未有代理商,请先创建代理商","agents"));
+		}
+		modelMap.addAttribute("agents", agents);
+		
+		if(!StringUtil.isEmpty(id)){
+			//获取当前代理商下的设备
+			DevQuery devQuery = new DevQuery();
+			ProductGroup productGroup = (ProductGroup) modelMap.get("productGroup");
+			devQuery.setAgentId(productGroup.getAgent().getId());
+			devQuery.setPagination(false);
+			List<Dev> devs = devService.findBySelective(devQuery).getList();
+			modelMap.addAttribute("devs", devs);
+		}
+	}
+
+	@Override
+	protected void beforeDelete(String[] ids) throws KPException {
+	}
+}

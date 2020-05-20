@@ -1,0 +1,4 @@
+db.jdbcUrl=jdbc:mysql://118.190.52.54:3306/CarWash
+db.driverClass=com.mysql.jdbc.Driver
+db.user=kelvin
+db.password=kelvinKELVIN123456_;;

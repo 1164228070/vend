@@ -1,0 +1,14 @@
+package com.haiyi.service;
+
+import com.haiyi.domain.ComsumeDetail;
+import com.maizi.exception.KPException;
+
+import java.util.List;
+
+public interface ComsumeDetailService{
+    void add(ComsumeDetail comsumeDetail) throws KPException;
+
+    List<ComsumeDetail> findByOrderId(String orderId);
+
+    int updateOutputInfo(String orderId, Integer orderNum, int count);
+}

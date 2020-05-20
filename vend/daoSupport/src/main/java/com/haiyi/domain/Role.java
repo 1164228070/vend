@@ -1,0 +1,55 @@
+package com.haiyi.domain;
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.haiyi.domain.base.BaseDomain;
+import com.maizi.anno.ClassInfoAnno;
+import com.maizi.anno.FilterInfoAnno;
+/**
+  * 
+  * @ClassName: Role
+  * @Company: 麦子科技
+  * @Description: Role实体
+  * @author 技术部-谢维乐
+  * @date 2016年5月1日 下午1:38:35
+  *
+ */
+@ClassInfoAnno(msg="角色",resourceId="id",dbId = "id")
+@FilterInfoAnno(fields = {""},sorts={""})
+public class Role extends BaseDomain {
+	@NotBlank
+    private String name;
+	@NotBlank
+    private Integer agentId;
+
+	public Integer getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(Integer agentId) {
+		this.agentId = agentId;
+	}
+
+	public String getName() {  
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public Role(){
+	}
+	public Role(Integer id){
+		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return "Role{" +
+				"name='" + name + '\'' +
+				", agentId=" + agentId +
+				", id=" + id +
+				", status=" + status +
+				'}';
+	}
+}

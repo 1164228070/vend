@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.RechargeLogMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.RechargeLog" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="rechargelog" property="rechargelog" jdbcType="VARCHAR" />
+      <result column="memberId" property="memberId" jdbcType="INTEGER" />
+      <result column="memberAccount" property="memberAccount" jdbcType="VARCHAR" />
+      <result column="memberName" property="memberName" jdbcType="VARCHAR" />
+      <result column="recharge_momey" property="recharge_momey" jdbcType="DECIMAL" />
+      <result column="gift" property="gift" jdbcType="DECIMAL" />
+      <result column="balance" property="balance" jdbcType="DECIMAL" />
+      <result column="payType" property="payType" jdbcType="TINYINT" />
+      <result column="payStatus" property="payStatus" jdbcType="TINYINT" />
+      <result column="remark" property="remark" jdbcType="VARCHAR" />
+      <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  
+  <sql id="Base_Column_List" >
+      id,
+      rechargelog,
+      memberId,
+      memberAccount,
+      memberName,
+      recharge_momey,
+      balance,
+      gift,
+      payType,
+      payStatus,
+      remark,
+      createDate
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from recharge_log where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+   <!--根据Id查询-->
+  <select id="findByMemberId" resultMap="BaseResultMap"  >
+      select <include refid="Base_Column_List" /> from recharge_log where memberId = #{memberId,jdbcType=INTEGER}
+  </select>
+   <!--根据Id查询-->
+  <select id="findByRechargelog" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from recharge_log where rechargelog = #{rechargelog,jdbcType=VARCHAR}
+  </select>
+
+
+
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.RechargeLogQuery">
+      select <include refid="Base_Column_List" /> from recharge_log
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="rechargelog != null">
+            and rechargelog = #{rechargelog,jdbcType=VARCHAR}
+         </if>
+         <if test="memberId != null">
+            and memberId = #{memberId,jdbcType=INTEGER}
+         </if>
+         <if test="memberAccount != null">
+            and memberAccount = #{memberAccount,jdbcType=VARCHAR}
+         </if>
+          <if test="memberName != null and memberName != ''">
+              <bind name="likeName" value="'%' + _parameter.memberName + '%'" />
+              and memberName like #{likeName,jdbcType=VARCHAR}
+          </if>
+         <if test="payStatus != null">
+            and payStatus = #{payStatus}
+         </if>
+         <if test="createDate != null">
+            and createDate = #{createDate,jdbcType=TIMESTAMP}
+         </if>
+      </trim>
+      order by createDate DESC
+  </select>
+  
+
+  <!-- 查找数量 --> 
+  <select id="count" resultType="int"  parameterType="java.util.Map">
+    select count(id) from recharge_log
+     <trim prefix="where" prefixOverrides="and | or">
+      <if test="payStatus != null" >
+        and payStatus = #{payStatus,jdbcType=TINYINT}
+      </if>
+      <if test="createDate != null" >
+        and DATE_FORMAT(createDate,'%Y-%m-%d') = #{createDate,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+  
+
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from recharge_log where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from recharge_log where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.RechargeLog" >
+    insert into recharge_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        <if test="rechargelog != null" >
+            rechargelog,
+        </if>
+        memberId,
+        memberAccount,
+         memberName,
+        recharge_momey,
+        balance,
+        <if test="gift != null and gift != ''" >
+            gift,
+        </if>
+        <if test="payType != null and payType != ''" >
+            payType,
+        </if>
+        payStatus,
+        createDate
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        <if test="rechargelog != null" >
+            #{rechargelog,jdbcType=VARCHAR},
+        </if>
+        #{memberId,jdbcType=INTEGER},
+        #{memberAccount,jdbcType=VARCHAR},
+        #{memberName,jdbcType=VARCHAR},
+        #{recharge_momey,jdbcType=DECIMAL},
+        #{balance,jdbcType=DECIMAL},
+        <if test="gift != null and gift != ''" >
+            #{gift,jdbcType=DECIMAL},
+        </if>
+        <if test="payType != null and payType != ''" >
+            #{payType,jdbcType=TINYINT},
+        </if>
+        #{payStatus,jdbcType=TINYINT},
+        #{createDate,jdbcType=TIMESTAMP}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.RechargeLog" >
+      update recharge_log
+      <set>
+          <if test="rechargelog != null" >
+              rechargelog = #{rechargelog,jdbcType=VARCHAR},
+          </if>
+          <if test="memberName != null" >
+              memberName = #{memberName,jdbcType=VARCHAR},
+          </if>
+          <if test="payType != null" >
+              payType = #{payType},
+          </if>
+          <if test="payStatus != null" >
+              payStatus = #{payStatus},
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+  <!-- 更新订单的状态 -->
+  <update id="updateStatus">
+      update recharge_log set payStatus = #{payStatus,jdbcType=TINYINT} where id = #{id,jdbcType=VARCHAR}
+  </update>
+	
+</mapper>

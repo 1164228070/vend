@@ -1,0 +1,7 @@
+package com.haiyi.service;
+
+import com.haiyi.domain.Agent;
+import com.haiyi.query.AgentQuery;
+import com.haiyi.service.base.BaseService;
+public interface AgentService extends BaseService<Agent,AgentQuery> {
+}

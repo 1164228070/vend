@@ -1,0 +1,70 @@
+package com.haiyi.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.haiyi.dao.ProductMapper;
+import com.haiyi.domain.Product;
+import com.haiyi.domain.vo.ProductVo;
+import com.haiyi.query.ProductQuery;
+import com.haiyi.service.ProductService;
+
+import java.util.List;
+
+@Service
+public class ProductServcieImpl implements ProductService{
+	
+	@Autowired
+	ProductMapper productMapper;
+
+	/**
+	 * 分页查找
+	 * @param e
+	 * @return
+	 */
+	public PageInfo<Product> findBySelective(ProductQuery e){
+    	if(e.isPagination()){
+    		PageHelper.startPage(e.getPageStart(),e.getPageSize());
+    		Page<Product> list = (Page<Product>) productMapper.findBySelective(e);
+    		return list.toPageInfo();
+    	}
+    	return new PageInfo<Product>(this.productMapper.findBySelective(e));
+    }
+
+	@Override
+	public Product findById(Integer productId) {
+		return  productMapper.findById(productId+"");
+	}
+
+	@Override
+	public List<Product> findByOrderNums(String devNum,Integer[] orderNums) {
+		String [] orderStrNums = new String[orderNums.length];
+		for(int i=0;i<orderNums.length;i++){
+			orderStrNums[i] = orderNums[i]+"";
+		}
+		return productMapper.findByOrderNums(devNum,orderStrNums);
+	}
+
+	/**
+	 * 更新库存
+	 * @param product
+	 * @return
+	 */
+	@Override
+	public int updateStoreCount(Product product) {
+		return this.productMapper.update(product);
+	}
+
+	/**
+	 * 获取商品详细信息
+	 * @param productId
+	 * @return
+	 */
+	@Override
+	public ProductVo findDetailById(Integer productId) {
+		return this.productMapper.findDetailById(productId);
+	}
+}

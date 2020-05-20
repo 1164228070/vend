@@ -1,0 +1,119 @@
+package com.haiyi.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.haiyi.controller.base.BaseController;
+import com.haiyi.domain.Agent;
+import com.haiyi.domain.DevAuth;
+import com.haiyi.domain.DictVal;
+import com.haiyi.query.AgentQuery;
+import com.haiyi.query.DevAuthQuery;
+import com.haiyi.service.AgentService;
+import com.haiyi.service.DevAuthService;
+import com.haiyi.service.DevService;
+import com.haiyi.utils.DictUtil;
+import com.haiyi.utils.ErrorTemplate;
+import com.haiyi.utils.RequestUtil;
+import com.haiyi.utils.StatusConstant;
+import com.maizi.anno.AuthAnno;
+import com.maizi.anno.ControllerAnno;
+import com.maizi.exception.ExceptionKind;
+import com.maizi.exception.KPException;
+import com.maizi.utils.JsonModel;
+
+@Controller
+@RequestMapping("/devAuths")
+@ControllerAnno(addUI = "/devAuths/save", detailUI = "/devAuths/detail", editUI = "/devAuths/edit", listUI = "/devAuths/list")
+public class DevAuthController extends BaseController<DevAuth,DevAuthQuery>{
+	
+	@Autowired
+	AgentService agentService;
+	
+	@Autowired
+	DevService  devService;
+	
+	@Autowired
+	public void setDevAuthService(DevAuthService devAuthService) {
+		this.baseService = devAuthService;
+	}
+
+	@Override
+	public DevAuth beforeSave(ModelMap modelMap, DevAuth t) throws KPException {
+		if(t.getId()!=null){
+			//更新不能更新状态
+			t.setStatus(null);
+		}
+		return t;
+	}
+
+	@Override
+	public void beforeSaveUI(ModelMap modelMap, String id) throws KPException {
+		AgentQuery agentQuery = new AgentQuery();
+		agentQuery.setPagination(false);
+		agentQuery.setStatus(StatusConstant.AGENT_STATUS_VERIFIED);
+		//查找
+		List<Agent> agents = agentService.findBySelective(agentQuery).getList();
+		if(agents.isEmpty()){
+			throw new KPException(ExceptionKind.BUSINESS_E,ErrorTemplate.getError("当前平台未有代理商,请先创建代理商","agents"));
+		}
+		modelMap.addAttribute("agents", agents);
+	}
+
+	@Override
+	protected void beforeDelete(String[] ids) throws KPException {
+	}
+	 
+	/**
+	 * 添加设备授权
+	 */
+	@RequestMapping(value="/",method = { RequestMethod.POST})
+	@AuthAnno(verifyLogin = true)
+	@Override
+	public String add(DevAuth t,ModelMap modelMap,Errors errors) throws KPException {
+		t=beforeSave(modelMap,t);
+		String content = RequestUtil.getRequest().getParameter("devNums");
+		if(StringUtils.isEmpty(content)){
+			throw new KPException(ExceptionKind.PARAM_E,"设备号不能为空!");
+		}
+		((DevAuthService)this.baseService).batchAddCardNum(content.split("\r\n"),t);
+		return "redirect:" + URI;
+	}
+	
+	
+	/**
+	 * 根据agentId获取token
+	 * 方法用途: <br>
+	 * @param roleId
+	 * @return
+	 */
+    @RequestMapping(value="/{agentId}/initDevAuth",method = RequestMethod.GET)
+	public @ResponseBody JsonModel initDevAuth(@PathVariable Integer agentId){
+		JsonModel jsonModel = new JsonModel();
+		List<DevAuth> result = ((DevAuthService)this.baseService).findDevAuthByAgentId(agentId);
+		jsonModel.setData(result);
+		jsonModel.setSuccess(true);
+		return jsonModel;
+	}
+    
+    
+    @RequestMapping(value={"selectStatus"},method=RequestMethod.GET)
+	@AuthAnno(verifyLogin=true)
+	public @ResponseBody JsonModel selectAgentId() throws KPException{
+		List<DictVal> dictVals = DictUtil.getDictValListByType(10);
+		JsonModel jsonModel = new JsonModel();
+		jsonModel.setData(dictVals);
+		jsonModel.setSuccess(true);
+		return jsonModel;
+	}
+}

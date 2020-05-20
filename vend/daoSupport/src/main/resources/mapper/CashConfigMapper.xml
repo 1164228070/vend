@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.CashConfigMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.CashConfig" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="agentId" property="agentId" jdbcType="INTEGER" />
+      <result column="type" property="type" jdbcType="VARCHAR" />
+      <result column="accNo" property="accNo" jdbcType="VARCHAR" />
+      <result column="accUser" property="accUser" jdbcType="VARCHAR" />
+      <result column="area" property="area" jdbcType="VARCHAR" />
+      <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      agentId,
+      type,
+      accNo,
+      accUser,
+      area,
+      createDate
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from cash_config where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.CashConfigQuery">
+      select <include refid="Base_Column_List" /> from cash_config
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="keyWords != null and keyWords != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.keyWords + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+         <if test="agentId != null">
+            and agentId = #{agentId,jdbcType=INTEGER}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from cash_config where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from cash_config where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.CashConfig" >
+    insert into cash_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        agentId,
+        type,
+        accNo,
+        accUser,
+        <if test="area != null and area != ''" >
+            area,
+        </if>
+        createDate
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{agentId,jdbcType=INTEGER},
+        #{type,jdbcType=VARCHAR},
+        #{accNo,jdbcType=VARCHAR},
+        #{accUser,jdbcType=VARCHAR},
+        <if test="area != null and area != ''" >
+            #{area,jdbcType=VARCHAR},
+        </if>
+        #{createDate,jdbcType=TIMESTAMP}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.CashConfig" >
+      update cash_config
+      <set>
+          <if test="type != null" >
+              type = #{type,jdbcType=VARCHAR},
+          </if>
+          <if test="accNo != null and accNo != ''" >
+              accNo = #{accNo,jdbcType=VARCHAR},
+          </if>
+          <if test="accUser != null and accUser != ''" >
+              accUser = #{accUser,jdbcType=VARCHAR},
+          </if>
+          <if test="area != null and area != ''" >
+              area = #{area,jdbcType=VARCHAR},
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER} and agentId = #{agentId,jdbcType=INTEGER}
+  </update>
+	
+</mapper>

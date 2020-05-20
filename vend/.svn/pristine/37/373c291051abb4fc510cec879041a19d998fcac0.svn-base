@@ -1,0 +1,24 @@
+package com.haiyi.service;
+
+import java.util.Date;
+import java.util.List;
+
+import com.haiyi.domain.Dev;
+import com.haiyi.query.DevQuery;
+import com.haiyi.service.base.BaseService;
+import com.maizi.exception.KPException;
+public interface DevService extends BaseService<Dev,DevQuery> {
+	List<Dev> selectDevNum();
+	 
+    int deleteById(Integer agentId,String id) throws KPException;
+
+	int deleteByIds(Integer agentId,String ... id);
+
+	boolean onLine(Integer devId, Integer agentId);
+
+	boolean offLine(Integer devId, Integer agentId);
+
+	boolean onLive(Integer devId, Integer agentId);
+
+	boolean offLive(Integer devId, Integer agentId);
+}

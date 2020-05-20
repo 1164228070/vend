@@ -1,0 +1,11 @@
+package com.haiyi.service;
+import com.haiyi.domain.Member;
+public interface MemberService{
+	Member login(String loginName,String password);
+
+	Member findById(String memberId);
+
+	int updateBalance(Member member);
+
+	void updatePassword(String passwordNew,Integer memberId);
+}

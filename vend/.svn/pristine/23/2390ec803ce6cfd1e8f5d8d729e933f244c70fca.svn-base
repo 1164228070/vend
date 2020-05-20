@@ -1,0 +1,17 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+        <!-- 基础库 -->
+	    <%@ include file="/WEB-INF/jsp/common/common.jspf" %>
+		<title>温馨提示</title>
+	</head>
+	<body>
+	  <div class="panel order-status">
+	    <div class="panel-item text-center">
+	      <img id="head-img" class="status-img center-block mb10" width="70" height="70" src="${pageContext.request.contextPath}/static/style/images/success.png">
+          <span class="f16" id="status_label">${msg}</span>
+	    </div>
+	  </div>
+	</body>
+</html>

@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.AgentMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.Agent" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="openId" property="openId" jdbcType="VARCHAR" />
+      <result column="password" property="password" jdbcType="VARCHAR" />
+      <result column="loginName" property="loginName" jdbcType="VARCHAR" />
+      <result column="rate" property="rate" jdbcType="DECIMAL" />
+      <result column="linkName" property="linkName" jdbcType="VARCHAR" />
+      <result column="linkPhone" property="linkPhone" jdbcType="VARCHAR" />
+      <result column="address" property="address" jdbcType="VARCHAR" />
+      <result column="leftMoney" property="leftMoney" jdbcType="DECIMAL" />
+      <result column="lockMoney" property="lockMoney" jdbcType="DECIMAL" />
+      <result column="score" property="score" jdbcType="INTEGER" />
+      <result column="status" property="status" jdbcType="INTEGER" />
+      <result column="payMode" property="payMode" jdbcType="TINYINT" />
+      <result column="agentRoleId" property="agentRoleId" jdbcType="INTEGER" />
+      <result column="agentRoleName" property="agentRoleName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      name,
+      openId,
+      password,
+      loginName,
+      rate,
+      linkName,
+      linkPhone,
+      address,
+      leftMoney,
+      lockMoney,
+      score,
+      status,
+      payMode,
+      agentRoleId,
+      agentRoleName
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from agent where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.AgentQuery">
+      select <include refid="Base_Column_List" /> from agent
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="name != null and name != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.name + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+         <if test="status != null and status != ''">
+            and status = #{status}
+         </if>
+         <if test="agentId != null and agentId != ''">
+            and id = #{agentId}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  <!-- 查找指定代理的权限 -->
+  <select id="quaeryAllMemus" resultType="com.haiyi.domain.Menu" parameterType="java.lang.Integer">
+      select m.* from agent a,agent_role r,t_agent_role_menu t ,t_menu m where a.agentRoleId = r.id and r.id= t.roleId and t.menuId = m.id and a.id  = #{agentId}
+  </select>
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from agent where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from agent where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.Agent" >
+    insert into agent
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        name,
+        <if test="openId != null and openId != ''" >
+            openId,
+        </if>
+        password,
+        loginName,
+        <if test="rate != null and rate != ''" >
+            rate,
+        </if>
+        <if test="linkName != null and linkName != ''" >
+            linkName,
+        </if>
+        <if test="linkPhone != null and linkPhone != ''" >
+            linkPhone,
+        </if>
+        <if test="address != null and address != ''" >
+            address,
+        </if>
+        leftMoney,
+        lockMoney,
+        score,
+        status,
+        <if test="payMode != null" >
+            payMode,
+        </if>
+        <if test="agentRoleId != null" >
+            agentRoleId,
+        </if>
+        <if test="agentRoleName != null" >
+            agentRoleName
+        </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR},
+        <if test="openId != null and openId != ''" >
+            #{openId,jdbcType=VARCHAR},
+        </if>
+        #{password,jdbcType=VARCHAR},
+        #{loginName,jdbcType=VARCHAR},
+        <if test="rate != null and rate != ''" >
+            #{rate,jdbcType=DECIMAL},
+        </if>
+        <if test="linkName != null and linkName != ''" >
+            #{linkName,jdbcType=VARCHAR},
+        </if>
+        <if test="linkPhone != null and linkPhone != ''" >
+            #{linkPhone,jdbcType=VARCHAR},
+        </if>
+        <if test="address != null and address != ''" >
+            #{address,jdbcType=VARCHAR},
+        </if>
+        #{leftMoney,jdbcType=DECIMAL},
+        #{lockMoney,jdbcType=DECIMAL},
+        #{score,jdbcType=INTEGER},
+        #{status,jdbcType=INTEGER},
+        <if test="payMode != null" >
+            #{payMode,jdbcType=TINYINT},
+        </if>
+        <if test="agentRoleId != null" >
+            #{agentRoleId,jdbcType=INTEGER},
+        </if>
+        <if test="agentRoleName != null" >
+            #{agentRoleName,jdbcType=VARCHAR}
+        </if>
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.Agent" >
+      update agent
+      <set>
+          <if test="name != null and name != ''" >
+              name = #{name,jdbcType=VARCHAR},
+          </if>
+          <if test="openId != null and openId != ''" >
+              openId = #{openId,jdbcType=VARCHAR},
+          </if>
+          <if test="loginName != null and loginName != ''" >
+              loginName = #{loginName,jdbcType=VARCHAR},
+          </if>
+          <if test="rate != null and rate != ''" >
+              rate = #{rate,jdbcType=DECIMAL},
+          </if>
+          <if test="linkName != null and linkName != ''" >
+              linkName = #{linkName,jdbcType=VARCHAR},
+          </if>
+          <if test="linkPhone != null and linkPhone != ''" >
+              linkPhone = #{linkPhone,jdbcType=VARCHAR},
+          </if>
+          <if test="address != null and address != ''" >
+              address = #{address,jdbcType=VARCHAR},
+          </if>
+          <if test="leftMoney != null" >
+              leftMoney = #{leftMoney,jdbcType=DECIMAL},
+          </if>
+          <if test="lockMoney != null" >
+              lockMoney = #{lockMoney,jdbcType=DECIMAL},
+          </if>
+          <if test="score != null" >
+              score = #{score,jdbcType=INTEGER},
+          </if>
+          <if test="status != null" >
+              status = #{status,jdbcType=INTEGER},
+          </if>
+          <if test="payMode != null" >
+              payMode = #{payMode,jdbcType=TINYINT},
+          </if>
+          <if test="agentRoleId != null" >
+              agentRoleId = #{agentRoleId,jdbcType=INTEGER},
+          </if>
+          <if test="agentRoleName != null" >
+              agentRoleName = #{agentRoleName,jdbcType=VARCHAR}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+    <!--更新密码--> 
+  <update id="updatePassword">
+      update agent set password = #{password,jdbcType=VARCHAR} where id = #{agentId,jdbcType=INTEGER}
+  </update>
+  
+  <!--更新余额--> 
+  <update id="updateLeftMoney">
+      update agent set leftMoney = leftMoney + #{changeMoney,jdbcType=DECIMAL} where id = #{agentId,jdbcType=INTEGER}
+  </update>
+
+
+    <!--单个修改费率-->
+    <update id="updateRateById">
+        update agent set rate = #{rate} where id = #{id}
+    </update>
+
+    <!--单个修改支付模式-->
+    <update id="updatePayModeById">
+        update agent set payMode = #{payMode} where id = #{id}
+    </update>
+    <!--单个修改openId-->
+    <update id="updateOpenIdById">
+        update agent set openId = #{openId} where id = #{id}
+    </update>
+
+
+
+  <!--登录-->
+  <select id="login" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List" /> from agent where loginName = #{loginName,jdbcType=VARCHAR} AND password = #{password,jdbcType=VARCHAR}
+  </select>
+
+  <select id="findByOrderId" resultMap="BaseResultMap">
+      select a.name,a.linkphone from agent a,comsume_log c where a.id=c.agentId and c.orderId=#{orderId,jdbcType=VARCHAR}
+  </select>
+  <select id="findByOpenId" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List" /> from agent where openId = #{openId,jdbcType=VARCHAR}
+  </select>
+</mapper>

@@ -1,0 +1,43 @@
+package com.haiyi.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.haiyi.dao.ProductLogMapper;
+import com.haiyi.domain.Product;
+import com.haiyi.domain.ProductLog;
+import com.haiyi.query.ProductLogQuery;
+import com.haiyi.service.ProductLogService;
+import com.haiyi.service.ProductService;
+import com.haiyi.service.base.impl.BaseServiceImpl;
+import com.maizi.exception.KPException;
+
+@Service
+public class ProductLogServiceImpl extends BaseServiceImpl<ProductLog, ProductLogQuery> implements ProductLogService{
+
+	
+	@Autowired
+	ProductService productService;
+	
+	@Autowired
+	public void setProductLogMapper(ProductLogMapper productLogMapper){
+		this.daoMapper = productLogMapper;
+	}
+	
+	@Override
+	public int updateById(ProductLog t) throws KPException {
+		return -1;
+	}
+	
+	@Override
+	public int add(ProductLog t) throws KPException {
+		Product product = productService.findById(t.getProductId()+"");
+		Product temp = new Product();	
+		temp.setId(product.getId());
+		temp.setStoreCount(product.getStoreCount()+t.getCount());
+		temp.setAgentId(product.getAgentId());
+		productService.updateById(temp);
+		return super.add(t);
+	}
+	
+}

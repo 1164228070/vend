@@ -1,0 +1,9 @@
+package com.haiyi.service;
+
+import com.haiyi.domain.Product;
+import com.haiyi.domain.vo.ProductVo;
+import com.haiyi.query.ProductQuery;
+import com.haiyi.service.base.BaseService;
+public interface ProductService extends BaseService<Product,ProductQuery> {
+	ProductVo findDetailById(Integer productId);
+}

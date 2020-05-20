@@ -1,0 +1,29 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+        <!-- 基础库 -->  
+	    <%@ include file="/WEB-INF/jsp/common/common.jspf" %>
+		<title>设置</title>
+	</head>
+	<body>
+	    <div class="panel">
+	        <a id="aboutus" class="block panel-chunk" href="${pageContext.request.contextPath}/about">
+	            <h3>关于我们</h3>
+	            <i class="arr-right absolute-middle"></i>  
+	        </a>
+	        <a class="block panel-chunk " href="${pageContext.request.contextPath}/opinions">
+	            <h3>用户反馈</h3>
+	            <i class="arr-right absolute-middle"></i>
+	        </a>
+			<a id="logout" class="block panel-chunk" href="${pageContext.request.contextPath}/logout">
+	            <h3>退出</h3>
+	            <i class="arr-right absolute-middle"></i>
+	        </a>
+	    </div>
+		<a href="javascript:;" class="go-back J-go-back"></a>
+		<!-- 主体 end -->  
+		<!-- 公共js -->
+	    <%@ include file="/WEB-INF/jsp/common/basic.jspf" %>
+	</body>
+</html>

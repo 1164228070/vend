@@ -1,0 +1,84 @@
+package com.haiyi.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.maizi.anno.AuthAnno;
+
+/**
+ * 
+ * @ClassName: MemberController
+ * @Company: 麦子科技
+ * @Description: 会员控制器
+ * @author 技术部-刘强峰
+ * @date 2016年4月19日下午11:50:08
+ *
+*/
+@Controller
+@RequestMapping("/members")
+public class MemberController {
+	
+	private final String CENTER_UI="member/member/center";
+	private final String CARD_UI="member/card/info";
+	private final String COMSUME_UI="member/comsume/list";
+	
+	private final String PASSWORD_UI="member/member/edit_password";
+	
+	//我的财富
+	private final String FORTUNE_UI="member/member/fortune";
+	
+	/**
+	 * 跳转个人中心
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value="/center",method = RequestMethod.GET)
+	@AuthAnno
+	public String center(ModelMap modelMap){  
+		return CENTER_UI;
+	}
+	
+	/**
+	 * 个人卡券
+	 * @return
+	 */
+	@RequestMapping(value="/cards",method = RequestMethod.GET)
+	@AuthAnno
+	public String cards(ModelMap modelMap){
+		return CARD_UI;
+	}
+	
+	
+	/**
+	 * 消费记录
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value="/comsumes",method = RequestMethod.GET)
+	@AuthAnno
+	public String comsumeLog(ModelMap modelMap){
+		return COMSUME_UI;
+	}
+	
+	/**
+	 * 编辑密码页面
+	 * @return  
+	 */
+	@RequestMapping(value="/password",method=RequestMethod.GET)
+	@AuthAnno
+	public String password(ModelMap modelMap){
+		return PASSWORD_UI;   
+	}
+	 
+	/**
+	 * 我的财富
+	 * @return        
+	 */
+	@RequestMapping(value="/fortune",method=RequestMethod.GET)
+	@AuthAnno
+	public String fortune(ModelMap modelMap){
+		return FORTUNE_UI;
+	}
+ }

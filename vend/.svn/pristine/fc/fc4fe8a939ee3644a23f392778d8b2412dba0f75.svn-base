@@ -1,0 +1,117 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="form"  uri="http://www.springframework.org/tags/form" %>  
+<!DOCTYPE html>
+<html>
+	<head>
+        <!-- 基础库 -->
+	    <%@ include file="/WEB-INF/jsp/common/common.jspf" %>
+		<title>订单详情</title>
+	</head>
+	<body>
+		<div class="panel">
+			<div id="info" class="container panel-item clearfix text-center" data-orderid="${orderId}">
+				<img class="mr10" width="60" height="60" src="">
+				<h1 class="orange f18" id="pay_amount">1001.11</h1>    
+				<p class="f14" id="pay_status">sdf</p>
+			</div>     
+<!-- 			
+			                                   
+    //商品ID
+    private String refere;                                      
+    //商品名称
+    private String productName;                                      
+    
+    private Byte payStatus;                                    
+     //哪个代理下消费
+    private Integer agentId; -->
+      
+		 
+			<div class="panel-bd text-left">
+				<p class="lightgray">   
+					<span >设备名</span>
+					<span id="dev_name" class="pull-right"></span>
+				</p>
+			</div>
+			<div class="panel-bd text-left">
+				<p class="lightgray">   
+					<span >设备编号</span>
+					<span id="dev_num" class="pull-right"></span>
+				</p>
+			</div>
+			<div class="panel-bd text-left">
+				<p class="lightgray">   
+					<span >订单号</span>
+					<span id="order_id" class="pull-right"></span>
+				</p>
+			</div>
+			<div class="panel-bd text-left">
+				<p class="lightgray">   
+					<span >交易类型</span>
+					<span id="trade_type" class="pull-right"></span>
+				</p>
+			</div>
+			<div class="panel-bd text-left">
+				<p class="lightgray">   
+					<span >付款方式</span>
+					<span id="pay_type" class="pull-right"></span>
+				</p>
+			</div>
+			<div class="panel-bd text-left">
+				<p class="lightgray">   
+					<span>创建时间</span>
+					<span id="create_time" class="pull-right"></span>
+				</p>
+			</div>
+			<div class="panel-bd text-left">
+				<p class="lightgray">   
+					<span >交易号</span>
+					<span id="comsume_log" class="pull-right"></span>
+				</p>
+			</div>
+			<!-- 描述 -->
+			<div class="container panel-item clearfix margin-b-none">
+			    <p>备注:</p>      
+				<p class="lightgray">很好玩</p>
+			</div>
+		</div>   
+		 
+		<!-- 公共js -->
+	    <%@ include file="/WEB-INF/jsp/common/basic.jspf" %>
+	    
+	    <!-- 引用loadMore -->
+	    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/plugins/iscroll/iscroll-probe.js"></script> 
+	    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/plugins/iscroll/LoadMore.js"></script> 
+		
+	    <script src="${pageContext.request.contextPath}/static/js/cache.js"></script>  
+	    
+		<script type="text/javascript">
+	        $(function(){
+	        	var orderId = $("div[id='info']").data("orderid");
+	        	if(orderId){
+			        request.ajax(common.JSONPContextPath+'/orders/'+orderId,'GET',{},false,function(result){
+		        		if(result.success){
+		        			var data = result.data;
+		        			$("#pay_status").text(cache.getName(2,data.payStatus));
+		        			
+		        			$("#pay_amount").text(data.payAmount);
+		        			$("#dev_name").text(data.devName);
+		        			$("#dev_num").text(data.devNum);
+		        			
+		        			$("#order_id").text(orderId);
+		        			$("#trade_type").text(cache.getName(11,data.tradeType));
+		        			$("#pay_type").text(cache.getName(5,data.payType));
+		        			$("#create_time").text(util.formatDateTime(data.createDate));
+		        			$("#comsume_log").text(data.comsumeLog);
+		        		}else{
+		        			$.tip.alert(2, result.msg, 2000);
+		        		}
+		        	});
+	        	}else{
+		            $.tip.alert(2,"加载失败", 2000);
+	        	}
+	        });
+		</script>
+	</body>
+</html>

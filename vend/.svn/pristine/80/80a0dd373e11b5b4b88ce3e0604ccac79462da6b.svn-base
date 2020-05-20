@@ -1,0 +1,7 @@
+package com.haiyi.service;
+
+import com.haiyi.domain.ProductLog;
+import com.haiyi.query.ProductLogQuery;
+import com.haiyi.service.base.BaseService;
+public interface ProductLogService extends BaseService<ProductLog,ProductLogQuery> {
+}

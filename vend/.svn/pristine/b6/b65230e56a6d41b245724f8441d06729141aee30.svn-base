@@ -1,0 +1,62 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- 基础库 -->
+	<%@ include file="/WEB-INF/jsp/common/common.jspf" %>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/login_reg.css" />
+	<title>支付方式</title>
+</head>
+<body>
+
+<!-- 主体 start -->
+<div class="panel">
+	<div class="panel-bd">
+		<p class="f16 gray text-center">支付金额:<span id="product" class="f18 orange" data-ordernum="${orderNum}" data-dev="${devNum}" >¥计算中...</span></p>
+	</div>
+</div>
+
+<form id="pay_form" method="post"></form>
+<!-- 公共js -->
+<%@ include file="/WEB-INF/jsp/common/basic.jspf" %>
+<script type="text/javascript">
+	$(function(){
+		if(is_weixin() || is_zfb()){
+			var param = {"orderNums":$('#product').data('ordernum'),"counts":1,"devNum":$('#product').data('dev')};
+			//统一下单
+			request.ajax(common.JSONPContextPath+'/orders/unifiedOrder','POST',param,false,function(result) {
+				if (result.success) {
+					var orderId = result.data.orderId;
+					//调用H5支付
+					if(is_weixin()){
+						window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5cee3eced61ee93b&redirect_uri=http%3A%2F%2Fwww.peshion.com%2FwapApp%2Fpays%2Fcode&response_type=code&scope=snsapi_userinfo&state="+orderId+"#wechat_redirect";
+					}else if(is_zfb()) {
+						 //TODO
+					}
+				} else {
+					$.tip.alert(2, result.msg, 2000);
+				}
+			});
+		}else{
+			$.tip.alert(2,"请使用微信或者支付宝", 2000);
+		}
+	});
+
+	function is_weixin(){
+		var ua = window.navigator.userAgent.toLowerCase();
+		if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	function is_zfb(){
+		//判断是支付宝app的浏览器
+		var userAgent = navigator.userAgent.toLowerCase();
+		return userAgent.match(/Alipay/i)=="alipay";
+	}
+</script>
+</body>
+</html>

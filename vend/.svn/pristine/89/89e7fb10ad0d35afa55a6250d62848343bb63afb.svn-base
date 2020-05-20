@@ -1,0 +1,77 @@
+package com.maizi.utils;
+/**
+ * 
+  * @ClassName: ConstantUtil
+  * @Company: 麦子科技
+  * @Description: 常量类
+  * @author 技术部-刘强峰
+  * @date 2016-2-22 下午2:25:14
+  *
+ */
+public class ConstantUtil {
+    // "验证结果"参数名称
+    public static final String CONSTRAINT_VIOLATIONS_ATTRIBUTE_NAME = "constraintViolations";
+    
+    // "瞬时消息"属性名称 
+    public static final String FLASH_MESSAGE_ATTRIBUTE_NAME = ".FLASH_MESSAGE";
+    
+    // 错误视图 
+    public static final String ERROR_VIEW = "common/error";
+    // 错误消息
+    public static final Message ERROR_MESSAGE = Message.error("admin.message.error");
+	 
+	//系统繁忙提示
+	public static final String SERVER_ERROR="系统繁忙,请稍后在!";
+	
+	//暂无数据提示
+	public static final String NO_DATA_TIP="暂无数据";
+	
+	//默认密码
+	public static final String DEFAULT_PASSWORD=MD5.GetMD5Code("123456");
+	
+	//默认密码明文
+	public static final String DEFAULT_PASSWORD_MW="123456";
+	
+	public static final String ACTIVE_SUCCESS="激活成功";
+	public static final String DEACTIVATE_SUCCESS="冻结成功";
+	
+	public static final String ONLINE_SUCCESS="上架成功";
+	public static final String OFFLINE_SUCCESS="下架成功";
+	
+	public static final String CHARSET="UTF-8";
+	
+	public static final String MIN_MONEY="0.01";    //提现最小金额
+	
+	
+	// 私钥 pkcs8格式的
+	public static final String RSA_PRIVATE_KEY = "MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDQc3y8q9jgnG2/\n" +
+	            "GJEZiLWbYR3MIQwJ1eBDSsUiOa14dBpkB3rgtBLv+PkeaYhkdiCufeKWOl7WFeks\n" +
+	            "2YNZLoGGNRzJwzuGfkba2YW7N3xwyxx2NWkrW7drV3bXxJCUFrbaxz7eGsN8udvJ\n" +
+	            "NNOqH8ryII9otNdvFKNRaXf79VH87bHzOrQZ9JuqPMoIQ8QXc2I8sIDWP5ECwqao\n" +
+	            "642mBv4PLDbozjZqb39E+CdEmhlLrm/9SfslxNNtIhXrWpptJh7V9heSU/3Uy5Ab\n" +
+	            "DJlu8iCP6crsL4az9u7h8CIfksN+ya8D/QmBlacttKqKj59c/amabXUx+3+SqoZ7\n" +
+	            "LFbEOnHhAgMBAAECggEATi8S2R1Hki96BlPrkH0zSJ0rdPXsMwAyRmsT95tUkjpR\n" +
+	            "77TShNdlxvZGUf7ZNn0MEwaKZzhre7bqJ3VKC7giwrjHHHIKsI5KeyldPHQ6S4AT\n" +
+	            "I88yrB2RdURwAcvrQnAmk3ZqARpeujhn1FbpEQUttJU71NUHfNVr0ExTwYApCUlc\n" +
+	            "D+FeTzQd1bS0a8YRhabBvw0A0tya/+UDDeDvlHR2JEhRqMi3JuIdyzFRvzybxEb6\n" +
+	            "iZafXi1Fy4QDuECQIAaJfumf2C66ncFHCpTJhtw51h4osKLQMLaFwCQTNyT1he6b\n" +
+	            "+CtWkLL2xxTn5vPbNwbM/TnQJy/TBWrRJ6RgYcPc5QKBgQD9TFTtnAECH5VlUZtG\n" +
+	            "NbVCNpUVDSEqCE6F+ObQqvospF6O0lyjMvWhO3E+kvWDLsHDRJhLoNQyyIYkdx/7\n" +
+	            "h7UircLUnqvrEclGiMKfgCKiVYkBpNdQweOWBPqte6KGHU2M4ZeR6ek350EdNOOJ\n" +
+	            "Ym1z/BFniZ3NMGrxI/Mu71ZwywKBgQDSrLGos0+vT1O2ESUj7yyuid06Bry3GkfF\n" +
+	            "zQtAwHpsyLoz7DgbtsUwTxWmwO2CTkLIuw54IwavkbrEjdsy3CpeceHFLWOJiN2Z\n" +
+	            "W9fvlZ923y2MdbnJU6mydoXsKnYZ9kldCpXjHKQZGtFV05uBD/cNjbVyqHBrhUuF\n" +
+	            "3CN7kCbugwKBgQCoD2xOFvMIUKJUDjhC9kGkhAiYZhS6Cbbn5wRmMPs6gXiHtIVo\n" +
+	            "dthIuOLjTKh++JfxEmMl0rjYVPnD2hIrVphVQQsC/aA9oJh2JylSoLbaFHyJzbBa\n" +
+	            "0bpKAFW+o0hrSaf5sHhbhOKLh/FJCp1puxe6G+YEV2ePC+/4vQyN+JjWzwKBgQC9\n" +
+	            "exVO5feFdZOU7Va6OyO018phpi2Vgc2L2h+E3Zk+vkq66HqOcpRoHrkagesch8cJ\n" +
+	            "QzSAWQBqaGfS4MOFuv9gcozdCzW7PZ4RkMlmcuw5vgD5k+jFarn2CSPqhUYzk4/o\n" +
+	            "Xtzwp5HwAm7FAs2aBwHs7seDmHuEOR70Bkrjl4NsgQKBgQDeqv8d559219P/7z8I\n" +
+	            "JvS/REG/OgBxJtkONk+kCtUA6HVTO/0y7aquWJz4on4TK03Cm+QxNbPD3JRQ9wq8\n" +
+	            "IDAIpsKrwhzWpS4k4GdbXze73Ot5timETDkHuPef3T3zABdt2tMzaBFJX/dujBya\n" +
+	            "ev26ZJTZ6PF64FNrYIemBF44Kg==";
+	
+	public static void main(String[] args) {
+		System.out.println(RSA_PRIVATE_KEY);
+	}
+}

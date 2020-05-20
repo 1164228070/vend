@@ -1,0 +1,56 @@
+@charset "utf-8";
+/*
+ 
+ * 17素材vip建站专区模块代码
+ * 详尽信息请看官网：http://www.17sucai.com/pins/vip
+ *
+ * Copyright , 温州易站网络科技有限公司版权所有
+ * 图片不能商用，代码可商用。
+ 
+ * 请尊重原创，未经允许请勿转载。
+ * 在保留版权的前提下可应用于个人或商业用途
+ 
+*/
+
+*{margin: 0;padding: 0;font-family: "微软雅黑";font-weight: 300;font-size: 14px;}
+ul{list-style: none;}
+a{text-decoration: none;}
+.fl{float:left}
+.fr{float:right}
+.section{padding:80px 0}
+.section .container{width:1210px;margin:0 auto}
+.section .mod-title{padding-bottom:35px;text-align:center}
+.section .mod-title h2{font-size:36px;margin-bottom:17px}
+ .section .case-list li{width:300px;height:400px;box-shadow:0 0 50px #ddd;float:left;color:#999;margin:32px}
+.section .case-list li a{color:#999}
+.section .case-list li a:hover{color:#333}
+.section .case-list .case-demo{overflow:hidden;height:26px;line-height:26px;margin-top:14px;margin-right:-12px}
+.section .case-list .case-demo i{display:inline-block;width:26px;height:26px;background:url(../images/icon_bottom.png) no-repeat;margin-right:12px;cursor:pointer}
+.section .case-list .case-demo i.weapp{background-position:0 0}
+.section .case-list .case-demo i.phone{background-position:-38px 0}
+.section .case-list .case-demo i.wechat{background-position:-76px 0}
+.section .case-list .case-demo i.weapp.active{background-position:0 -36px}
+.section .case-list .case-demo i.phone.active{background-position:-38px -36px}
+.section .case-list .case-demo i.wechat.active{background-position:-76px -36px}
+.section .case-list .case-intro{line-height:180%;margin:16px 0;text-align:justify}
+.section .case-list .case-url{width:198px;margin:0 auto;border:1px solid #E6E6E6;border-radius:25px;height:40px;line-height:40px;text-align:center}
+.section .case-list .case-url a{cursor:pinter}
+.section .case-list .case-logo{text-align:center;height:49px;margin:10px 0}
+.section .case-list .case-show-img .case-logo{margin:6px 0}
+.section .case-list .case-show{display:none;width:198px;padding:15px 20px 12px}
+.section .case-list .show-text{display:block;height:223px}
+.section .case-list .case-demo{display:block}
+.section .case-list .show-qrcode{display:none}
+.section .case-list .case-show-img{display:block}
+.section .case-list .show-qrcode{height:213px;padding-top:20px;text-align:center;line-height:240%;overflow:hidden}
+.section .case-list .show-qrcode .img{}
+.section .case-list .show-qrcode .intro{font-size:16px;color:#333;margin:6px 0 -10px}
+.section .case-list .show-qrcode li{display:none;width:auto;height:auto;box-shadow:none;float:none;margin:0}
+.section .case-list .case-type{margin-left:10px;height:40px;line-height:40px}
+.section .case-list .case-type .fr{height:40px;line-height:40px}
+.section .case-list .case-type i{display:inline-block;width:17px;height:17px;background:url(../images/icon-top.png) no-repeat;margin-right:10px}
+.section .case-list .case-type i.weapp{background-position:-5px 0}
+.section .case-list .case-type i.ios{background-position:-30px 0}
+.section .case-list .case-type i.android{background-position:-55px 0}
+.section .case-list .case-type i.wechat{background-position:-80px 0}
+.section .case-list .case-type i.pc{background-position:-106px 0}

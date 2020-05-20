@@ -1,0 +1,54 @@
+package com.haiyi.netty.packet;
+
+import com.haiyi.netty.packet.util.BasePacket;
+import com.haiyi.netty.packet.util.Command;
+
+import java.util.Date;
+/**
+ * 洗车结算数据包
+ * @author Administrator
+ *
+ */
+public class CarWashCostPacket extends BasePacket {
+    private String devNum;
+    private String account;
+    private String consumption;
+    private Date time;
+
+    public String getDevNum() {
+        return devNum;
+    }
+
+    public void setDevNum(String devNum) {
+        this.devNum = devNum;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public String getConsumption() {
+        return consumption;
+    }
+
+    public void setConsumption(String consumption) {
+        this.consumption = consumption;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+    @Override
+    public Byte getCommand() {
+        return Command.CARWASH_COST_REQUEST;
+    }
+}

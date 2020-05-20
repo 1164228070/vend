@@ -1,0 +1,75 @@
+package com.haiyi.netty.server.handler;
+
+import com.github.pagehelper.PageInfo;
+import com.haiyi.domain.Product;
+import com.haiyi.domain.ProductGroup;
+import com.haiyi.query.ProductGroupQuery;
+import com.haiyi.query.ProductQuery;
+import com.haiyi.service.ProductGroupService;
+import com.haiyi.service.ProductService;
+import com.haiyi.utils.SpringUtil;
+import com.haiyi.utils.StatusConstant;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
+import java.util.*;
+
+//1. 加上注解标识，表明该 handler 是可以多个 channel 共享的
+@ChannelHandler.Sharable
+public class ProductHandler extends SimpleChannelInboundHandler<ProductPacket>{
+
+	private static final ProductHandler productHandler = new ProductHandler();
+	private ProductHandler() {
+	}
+	
+	public static ProductHandler getInstance() {
+		return productHandler;
+	}
+
+	/**
+	 * 当消息到达时
+	 */
+	@Override
+	protected void channelRead0(ChannelHandlerContext ctx, ProductPacket productPacket) throws Exception {
+
+		ProductResponsePacket productResponsePacket  = new ProductResponsePacket();
+		ProductGroupService productGroupService = SpringUtil.getBean("productGroupServiceImpl");
+
+		String devNum = productPacket.getDevNum();
+		ProductGroupQuery productGroupQuery = new ProductGroupQuery();
+		productGroupQuery.setDevNum(devNum);
+		List<ProductGroup> productGroups = productGroupService.findBySelective(productGroupQuery).getList();
+
+		if(productGroups.size()==1){
+			//查找当前组下的商品信息
+			ProductQuery productQuery = new ProductQuery();
+			productQuery.setStatus(StatusConstant.PRODUCT_STATUS_ONLINE);
+			productQuery.setProductGroupId(productGroups.get(0).getId());
+
+			productQuery.setPagination(false);
+			ProductService productService =  SpringUtil.getBean("productServcieImpl");
+			PageInfo<Product> products =productService.findBySelective(productQuery);
+			List<Product> productsList = products.getList();
+
+			List<Map<String,Object>> tempLists = new ArrayList<>();
+			for(Product product : productsList){
+				Map<String,Object> tempMap = new HashMap<String,Object>();
+				tempMap.put("name",product.getName());
+				tempMap.put("price",product.getPrice());
+				tempMap.put("storeCount",product.getStoreCount());
+				tempMap.put("img",product.getImg());
+				tempMap.put("orderNum",product.getOrderNum());
+				tempLists.add(tempMap);
+			}
+			productResponsePacket.setResult(true);
+			productResponsePacket.setData(tempLists);
+		}else{
+			//没有找到
+			productResponsePacket.setResult(false);
+			productResponsePacket.setMsg("当前设备未绑定商品组");
+		}
+	    // 登录响应
+		ctx.channel().writeAndFlush(productResponsePacket);
+	}
+}

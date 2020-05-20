@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.CountingLogMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.CountingLog" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="productNum" property="productNum" jdbcType="INTEGER" />
+      <result column="productId" property="productId" jdbcType="INTEGER" />
+      <result column="count" property="count" jdbcType="INTEGER" />
+      <result column="devId" property="devId" jdbcType="INTEGER" />
+      <result column="devNum" property="devNum" jdbcType="INTEGER" />
+      <result column="agentId" property="agentId" jdbcType="INTEGER" />
+      <result column="type" property="type" jdbcType="TINYINT" />
+      <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      name,
+      productNum,
+      productId,
+      count,
+      devId,
+      devNum,
+      agentId,
+      type,
+      createTime
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from counting_log where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.CountingLogQuery">
+      select <include refid="Base_Column_List" /> from counting_log
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="agentId != null">
+            agentId =  #{agentId,jdbcType=INTEGER}
+         </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from counting_log where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from counting_log where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.CountingLog" >
+    insert into counting_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        name,
+        productNum,
+        productId,
+        count,
+        devId,
+        devNum,
+        agentId,
+        type,
+        createTime
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR},
+        #{productNum,jdbcType=INTEGER},
+        #{productId,jdbcType=INTEGER},
+        #{count,jdbcType=INTEGER},
+        #{devId,jdbcType=INTEGER},
+        #{devNum,jdbcType=INTEGER},
+        #{agentId,jdbcType=INTEGER},
+        #{type,jdbcType=TINYINT},
+        #{createTime,jdbcType=TIMESTAMP}
+    </trim>
+  </insert>
+</mapper>

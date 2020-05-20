@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.UserCashApplyMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.UserCashApply" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="money" property="money" jdbcType="DECIMAL" />
+      <result column="income" property="income" jdbcType="DECIMAL" />
+      <result column="agentMoney" property="agentMoney" jdbcType="DECIMAL" />
+      <result column="adminMoney" property="adminMoney" jdbcType="DECIMAL" />
+      <result column="userId" property="userId" jdbcType="INTEGER" />
+      <result column="userName" property="userName" jdbcType="VARCHAR" />
+      <result column="agentId" property="agentId" jdbcType="INTEGER" />
+      <result column="agentName" property="agentName" jdbcType="VARCHAR" />
+      <result column="typeName" property="typeName" jdbcType="VARCHAR" />
+      <result column="accNo" property="accNo" jdbcType="VARCHAR" />
+      <result column="accUser" property="accUser" jdbcType="VARCHAR" />
+      <result column="area" property="area" jdbcType="VARCHAR" />
+      <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+      <result column="handlerDate" property="handlerDate" jdbcType="TIMESTAMP" />
+      <result column="remark" property="remark" jdbcType="VARCHAR" />
+      <result column="status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+      id,
+      money,
+      income,
+      agentMoney,
+      adminMoney,
+      userId,
+      userName,
+      agentId,
+      agentName,
+      typeName,
+      accNo,
+      accUser,
+      area,
+      createDate,
+      handlerDate,
+      remark,
+      status
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from user_cash_apply where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.UserCashApplyQuery">
+      select <include refid="Base_Column_List" /> from user_cash_apply
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="keyWords != null and keyWords != ''">
+            <bind name="likeKeyWords" value="'%' + _parameter.keyWords + '%'" />
+            and name like #{likeKeyWords,jdbcType=VARCHAR}
+         </if>
+         <if test="userId != null">
+            and userId = #{userId,jdbcType=INTEGER}
+         </if>
+         <if test="agentId != null">
+            and agentId = #{agentId,jdbcType=INTEGER}
+         </if>
+          <if test="userName != null">
+              and userName = #{userName,jdbcType=VARCHAR}
+          </if>
+          <if test="agentName != null">
+              and agentName = #{agentName,jdbcType=VARCHAR}
+          </if>
+          <if test="accNo != null">
+              and accNo = #{accNo,jdbcType=VARCHAR}
+          </if>
+          <if test="accUser != null">
+              and accUser = #{accUser,jdbcType=VARCHAR}
+          </if>
+          <if test="area != null">
+              and area = #{area,jdbcType=VARCHAR}
+          </if>
+          <if test="status != null">
+              and status = #{status,jdbcType=TINYINT}
+          </if>
+      </trim>
+      order by id DESC
+  </select>
+  
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from user_cash_apply where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from user_cash_apply where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.UserCashApply" >
+    insert into user_cash_apply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id,
+        money,
+        <if test="income != null and income != ''" >
+            income,
+        </if>
+        <if test="agentMoney != null and agentMoney != ''" >
+            agentMoney,
+        </if>
+        <if test="adminMoney != null and adminMoney != ''" >
+            adminMoney,
+        </if>
+        userId,
+        userName,
+        <if test="agentId != null and agentId != ''" >
+            agentId,
+        </if>
+        <if test="agentName != null and agentName != ''" >
+            agentName,
+        </if>
+        typeName,
+        accNo,
+        accUser,
+        <if test="area != null and area != ''" >
+            area,
+        </if>
+        createDate,
+        <if test="remark != null and remark != ''" >
+            remark,
+        </if>
+        status
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{id,jdbcType=INTEGER},
+        #{money,jdbcType=DECIMAL},
+        <if test="income != null and income != ''" >
+            #{income,jdbcType=DECIMAL},
+        </if>
+        <if test="agentMoney != null and agentMoney != ''" >
+            #{agentMoney,jdbcType=DECIMAL},
+        </if>
+        <if test="adminMoney != null and adminMoney != ''" >
+            #{adminMoney,jdbcType=DECIMAL},
+        </if>
+        #{userId,jdbcType=INTEGER},
+        #{userName,jdbcType=VARCHAR},
+        <if test="agentId != null and agentId != ''" >
+            #{agentId,jdbcType=INTEGER},
+        </if>
+        <if test="agentName != null and agentName != ''" >
+            #{agentName,jdbcType=VARCHAR},
+        </if>
+        #{typeName,jdbcType=VARCHAR},
+        #{accNo,jdbcType=VARCHAR},
+        #{accUser,jdbcType=VARCHAR},
+        <if test="area != null and area != ''" >
+            #{area,jdbcType=VARCHAR},
+        </if>
+        #{createDate,jdbcType=TIMESTAMP},
+        <if test="remark != null and remark != ''" >
+            #{remark,jdbcType=VARCHAR},
+        </if>
+        #{status,jdbcType=TINYINT}
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.UserCashApply" >
+      update user_cash_apply
+      <set>
+          <if test="income != null" >
+              income = #{income,jdbcType=DECIMAL},
+          </if>
+          <if test="agentMoney != null" >
+              agentMoney = #{agentMoney,jdbcType=DECIMAL},
+          </if>
+          <if test="adminMoney != null" >
+              adminMoney = #{adminMoney,jdbcType=DECIMAL},
+          </if>
+          <if test="handlerDate != null" >
+              handlerDate = #{handlerDate,jdbcType=TIMESTAMP},
+          </if>
+          <if test="remark != null" >
+              remark = #{remark,jdbcType=VARCHAR},
+          </if>
+          <if test="status != null" >
+              status = #{status,jdbcType=TINYINT}
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+</mapper>

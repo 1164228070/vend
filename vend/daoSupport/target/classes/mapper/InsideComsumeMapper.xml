@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiyi.dao.InsideComsumeMapper">
+
+  <resultMap id="BaseResultMap" type="com.haiyi.domain.InsideComsume" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="orderId" property="orderId" jdbcType="VARCHAR" />
+      <result column="devName" property="devName" jdbcType="VARCHAR" />
+      <result column="devNum" property="devNum" jdbcType="VARCHAR" />
+      <result column="productId" property="productId" jdbcType="INTEGER" />
+      <result column="productName" property="productName" jdbcType="VARCHAR" />
+      <result column="userId" property="userId" jdbcType="INTEGER" />
+      <result column="userName" property="userName" jdbcType="VARCHAR" />
+      <result column="agentName" property="agentName" jdbcType="VARCHAR" />
+      <result column="agentId" property="agentId" jdbcType="INTEGER" />
+      <result column="price" property="price" jdbcType="DECIMAL" />
+      <result column="cost" property="cost" jdbcType="DECIMAL" />
+      <result column="payStatus" property="payStatus" jdbcType="TINYINT" />
+      <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+
+  
+  <sql id="Base_Column_List" >
+      id,
+      orderId,
+      devName,
+      devNum,
+      productId,
+      productName,
+      userId,
+      userName,
+      agentName,
+      agentId,
+      price,
+      cost,
+      payStatus,
+      createDate
+  </sql>
+  
+  <!--根据Id查询-->
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+      select <include refid="Base_Column_List" /> from inside_comsume where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  
+  <!-- 多条件查询 -->
+  <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.haiyi.query.InsideComsumeQuery">
+      select <include refid="Base_Column_List" /> from inside_comsume
+      <trim prefix="where" prefixOverrides="and |or ">
+         <if test="userName != null">
+            and userName = #{userName,jdbcType=VARCHAR}
+         </if>
+         <if test="agentName != null">
+            and agentName = #{agentName,jdbcType=VARCHAR}
+         </if>
+         <if test="orderId != null">
+            and orderId = #{orderId,jdbcType=VARCHAR}
+         </if>
+         <if test="devNum != null">
+            and devNum = #{devNum,jdbcType=VARCHAR}
+         </if>
+         <if test="productId != null">
+            and productId = #{productId,jdbcType=INTEGER}
+         </if>
+         <if test="productName != null">
+            and productName = #{productName,jdbcType=VARCHAR}
+         </if>
+         <if test="payStatus != null">
+            and payStatus = #{payStatus}
+         </if>
+         <if test="userId != null">
+            and userId = #{userId,jdbcType=INTEGER}
+         </if>
+         <if test="agentId != null">
+            and agentId = #{agentId,jdbcType=INTEGER}
+         </if>
+         <if test="start != null and end != null ">
+            and #{start,jdbcType=VARCHAR} &lt;= DATE_FORMAT(createDate,'%Y-%m-%d') and DATE_FORMAT(createDate,'%Y-%m-%d') &lt;= #{end,jdbcType=VARCHAR}
+         </if>
+      </trim>
+      order by createDate ASC
+  </select>
+
+  
+  <!-- 查找数量 --> 
+  <select id="count" resultType="int"  parameterType="java.util.Map">
+    select count(id) from inside_comsume
+     <trim prefix="where" prefixOverrides="and | or">
+      <if test="payStatus != null" >
+        and payStatus = #{payStatus,jdbcType=TINYINT}
+      </if>
+      <if test="createDate != null" >
+        and DATE_FORMAT(createDate,'%Y-%m-%d') = #{createDate,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+  
+  <!-- 删除 -->
+  <delete id="deleteById" parameterType="java.lang.String" >
+      delete from inside_comsume where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 批量删除 -->
+  <delete id="deleteByIds" parameterType="java.lang.String">
+      delete from inside_comsume where id in
+      <foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+  </delete>
+  
+  <!--部分字段允许为空-->
+  <insert id="add" parameterType="com.haiyi.domain.InsideComsume" >
+    insert into inside_comsume
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        orderId,
+        devName,
+        devNum,
+        <if test="productId != null" >
+            productId,
+        </if>
+        <if test="productName != null" >
+            productName,
+        </if>
+        <if test="userId != null" >
+            userId,
+        </if>
+        <if test="userName != null" >
+            userName,
+        </if>
+        <if test="agentName != null" >
+            agentName,
+        </if>
+        <if test="agentId != null" >
+            agentId,
+        </if>
+        <if test="price != null and price != ''" >
+            price,
+        </if>
+        <if test="cost != null and cost != ''" >
+            cost,
+        </if>
+        <if test="payStatus != null and payStatus != ''" >
+            payStatus,
+        </if>
+        createDate,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{orderId,jdbcType=VARCHAR},
+        #{devName,jdbcType=VARCHAR},
+        #{devNum,jdbcType=VARCHAR},
+        <if test="productId != null" >
+            #{productId,jdbcType=INTEGER},
+        </if>
+        <if test="productName != null" >
+            #{productName,jdbcType=VARCHAR},
+        </if>
+        <if test="userId != null" >
+            #{userId,jdbcType=INTEGER},
+        </if>
+        <if test="userName != null" >
+            #{userName,jdbcType=VARCHAR},
+        </if>
+        <if test="agentName != null" >
+            #{agentName,jdbcType=VARCHAR},
+        </if>
+        <if test="agentId != null" >
+            #{agentId,jdbcType=INTEGER},
+        </if>
+        <if test="price != null and price != ''" >
+            #{price,jdbcType=DECIMAL},
+        </if>
+        <if test="cost != null and cost != ''" >
+            #{cost,jdbcType=DECIMAL},
+        </if>
+        <if test="payStatus != null and payStatus != ''" >
+            #{payStatus,jdbcType=TINYINT},
+        </if>
+        #{createDate,jdbcType=TIMESTAMP},
+    </trim>
+  </insert>
+  
+  <!--更新--> 
+  <update id="update" parameterType="com.haiyi.domain.InsideComsume" >
+      update inside_comsume
+      <set>
+          <if test="payStatus != null" >
+              payStatus = #{payStatus},
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+  <!-- 更新订单的状态 -->
+  <update id="updateStatus">
+      update inside_comsume set payStatus = #{payStatus,jdbcType=TINYINT} where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+</mapper>

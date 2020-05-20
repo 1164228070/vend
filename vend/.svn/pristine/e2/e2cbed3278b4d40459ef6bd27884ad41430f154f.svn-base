@@ -1,0 +1,147 @@
+package com.haiyi.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.haiyi.domain.*;
+import com.haiyi.netty.server.handler.auth.SessionUtil;
+import com.haiyi.query.ProductQuery;
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.service.DevService;
+import com.haiyi.service.ProductService;
+import com.haiyi.utils.StatusConstant;
+import com.maizi.exception.ExceptionKind;
+import com.maizi.exception.KPException;
+import com.maizi.utils.JsonModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * 
+ * @ClassName: DevController
+ * @Company: 麦子科技
+ * @Description: 会员控制器
+ * @author 技术部-刘强峰
+ * @date 2016年4月19日下午11:50:08
+ *
+*/
+@Controller
+@RequestMapping("/devs")
+public class DevController {
+	@Autowired
+	DevService devService;
+	
+	@Autowired
+	ProductService productService;
+	
+	@Autowired
+	ComsumeLogService comsumeLogService;
+
+
+	/**
+	 * 获取指定设备编号下的所有商品
+	 * @param modelMap
+	 * @param devNum
+	 * @return
+	 */
+	@RequestMapping(value="/{devNum}/products",method=RequestMethod.GET,headers="X-Requested-With=XMLHttpRequest")
+	public @ResponseBody JsonModel listProduct(ModelMap modelMap,@PathVariable String devNum,ProductQuery productQuery){
+		JsonModel jsonModel = new JsonModel();
+
+		Dev dev = devService.findByNum(devNum);
+		if(dev==null){
+			jsonModel.setMsg("参数错误");
+			return jsonModel;
+		}
+		if(StatusConstant.DEV_STATUS_ONLINE!=dev.getState()){
+			jsonModel.setMsg("设备不可用");
+			return jsonModel;
+		}
+		if(SessionUtil.getChannel(devNum)==null){
+			jsonModel.setMsg("设备不可用");
+			return jsonModel;
+		}
+
+		//查找设备的组信息
+		List<ProductGroup> results= devService.findProductGroup(devNum);
+		if(results==null || results.isEmpty()){
+			throw new KPException(ExceptionKind.BUSINESS_E,"当前设备未绑定商品组");
+		}
+		
+		//查找当前
+		productQuery.setStatus(StatusConstant.PRODUCT_STATUS_ONLINE);
+		productQuery.setProductGroupId(results.get(0).getId());
+		
+		productQuery.setPagination(false);
+		PageInfo<Product> products = productService.findBySelective(productQuery);
+		jsonModel.setData(products.getList());
+		jsonModel.setSuccess(true);
+		 return jsonModel;
+	}
+
+	/**
+	 * 获取当前已经支付记录
+	 * @param devNum
+	 * @param token
+	 * @return
+	 */
+	@RequestMapping(value="/{devNum}/comsumeLog",method=RequestMethod.GET)
+	public @ResponseBody JsonModel obtainDevTask(@PathVariable String devNum,@RequestParam String token){
+	    JsonModel jsonModel = new JsonModel();
+/*
+	   Dev dev = devService.findByNum(devNum);
+		if(dev==null){
+            jsonModel.setMsg("设备不存在");
+            return jsonModel;
+		}
+        List<ComsumeDetail> comsumeDetails = comsumeLogService.findOuttingOrderByDevNum(devNum);
+		if(comsumeDetails==null){
+            jsonModel.setMsg("没有最新购买的订单");
+            return jsonModel;
+		}else{
+		    jsonModel.setSuccess(true);
+		    jsonModel.setData(comsumeDetails);
+            return jsonModel;
+        }*/
+return null;
+	}
+
+    /**
+     *  出货上报接口
+     * @param devNum    设备编号
+     * @param orderId   订单Id
+     * @param token     token
+     * @param orderNum    商品Id
+     * @param count     数量
+     * @return
+     */
+	@RequestMapping(value="/{devNum}/comsumeLogs/{orderId}",method=RequestMethod.GET)
+	public @ResponseBody JsonModel outputCallback(@PathVariable Integer devNum,@PathVariable String orderId,@RequestParam String token,@RequestParam Integer orderNum,@RequestParam Integer count){
+		//查询订单
+		/*ComsumeLog comsumeLog = comsumeLogService.findByOrderId(orderId);
+		JsonModel jsonModel = new JsonModel();
+		if(comsumeLog==null){
+		    jsonModel.setMsg("无效订单");
+		    return jsonModel;
+		}
+		if(StatusConstant.PAY_STATUS_PAIED==comsumeLog.getPayStatus()){
+            int effect= comsumeDetailService.updateOutputInfo(orderId,orderNum,count);
+            if(effect==1){
+                jsonModel.setSuccess(true);
+                jsonModel.setMsg("出货成功");
+            }else{
+                jsonModel.setMsg("出货失败");
+            }
+		}else{
+            jsonModel.setMsg("没有可出货的订单");
+		}
+		return jsonModel;*/
+
+		return null;
+	}
+
+
+
+}

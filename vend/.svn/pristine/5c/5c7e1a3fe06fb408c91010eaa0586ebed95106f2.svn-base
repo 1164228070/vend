@@ -1,0 +1,67 @@
+package com.haiyi.netty.server.handler;
+
+import com.haiyi.domain.ComsumeLog;
+import com.haiyi.service.ComsumeDetailService;
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.utils.SpringUtil;
+import com.haiyi.utils.StatusConstant;
+import com.maizi.utils.LogUtils;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
+//1. 加上注解标识，表明该 handler 是可以多个 channel 共享的
+@ChannelHandler.Sharable
+public class FeedbackHandler extends SimpleChannelInboundHandler<FeedbackPacket>{
+
+		private static final FeedbackHandler feedbackHandler = new FeedbackHandler();
+		private FeedbackHandler() {
+		}
+	
+	public static FeedbackHandler getInstance() {
+		return feedbackHandler;
+	}
+
+	/**
+	 * 当消息到达时
+	 */
+	@Override
+	protected void channelRead0(ChannelHandlerContext ctx, FeedbackPacket feedbackPacket) throws Exception {
+		FeedbackResponsePacket feedbackResponsePacket = new FeedbackResponsePacket();
+		feedbackResponsePacket.setVersion(feedbackPacket.getVersion());
+
+		String devNum = feedbackPacket.getDevNum();
+
+        String orderId = feedbackPacket.getOrderId();
+        Integer count = feedbackPacket.getCount();
+        String orderNum = feedbackPacket.getOrderNum();
+
+        //处理数据
+
+		ComsumeLogService comsumeLogService = SpringUtil.getBean("comsumeLogServiceImpl");
+		ComsumeDetailService comsumeDetailService = SpringUtil.getBean("comsumeDetailServiceImpl");
+		//查询订单
+		ComsumeLog comsumeLog = comsumeLogService.findByOrderId(orderId);
+		if(comsumeLog==null){
+			LogUtils.logError("错误订单[{}]号",orderId);
+			feedbackResponsePacket.setMsg("不存在该订单");
+		} else  if(StatusConstant.PAY_STATUS_PAIED==comsumeLog.getPayStatus()){
+			int effect= comsumeDetailService.updateOutputInfo(orderId,Integer.parseInt(orderNum),count);
+			if(effect==1){
+				//设置出货成功
+				feedbackResponsePacket.setResult(true);
+				feedbackResponsePacket.setMsg("回馈成功");
+				LogUtils.logInfo("订单[{}],回馈成功",orderId);
+			}else{
+				LogUtils.logError("订单[{}],回馈失败",orderId);
+				feedbackResponsePacket.setMsg("回馈失败");
+			}
+		}else{
+			//订单状态无效
+			LogUtils.logError("订单[{}]当前状态[{}]无效",orderId,comsumeLog.getPayStatus());
+			feedbackResponsePacket.setMsg("订单状态无效");
+		}
+		//回馈响应
+		ctx.channel().writeAndFlush(feedbackResponsePacket);
+	}
+}

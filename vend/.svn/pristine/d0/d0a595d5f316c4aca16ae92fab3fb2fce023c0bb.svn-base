@@ -1,0 +1,8 @@
+package com.haiyi.service;
+
+import com.haiyi.domain.ComsumeDetail;
+import com.haiyi.query.ComsumeDetailQuery;
+import com.haiyi.service.base.BaseService;
+
+public interface ComsumeDetailService extends BaseService<ComsumeDetail,ComsumeDetailQuery> {
+}

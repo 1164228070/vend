@@ -1,0 +1,85 @@
+package com.haiyi.controller;
+
+import com.haiyi.domain.ComsumeLog;
+import com.haiyi.pay.GateWayService;
+import com.haiyi.service.ComsumeLogService;
+import com.haiyi.utils.IPUtil;
+import com.haiyi.utils.MoneyUtil;
+import com.haiyi.utils.StatusConstant;
+import com.haiyi.utils.XmlUtils;
+import com.maizi.utils.JsonModel;
+import com.maizi.utils.LogUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 支付控制器
+ *
+ * @author Administrator
+ *
+ */
+@Controller
+@RequestMapping("/pay")
+public class PayController {
+	@Resource
+	ComsumeLogService comsumeLogService;
+
+
+	/**
+	 * 支付接口
+	 * @param payType
+	 * @param orderId
+	 * @param response
+	 * @param request
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/{payType}/unifiedorder/{orderId}")
+	@ResponseBody
+	public JsonModel unifiedorder(@PathVariable String payType, @PathVariable String orderId, @RequestParam String code, HttpServletResponse response, HttpServletRequest request) throws IOException, ServletException {
+
+		JsonModel jsonModel = new JsonModel();
+
+		String form = "";
+		ComsumeLog comsumeLog = comsumeLogService.findByOrderId(orderId);
+		if (comsumeLog != null  && comsumeLog.getPayStatus()== StatusConstant.PAY_STATUS_PAYING) {
+			String IP = IPUtil.getIp(request);
+			if ("wxpay".equals(payType)) {
+				String total = MoneyUtil.changeY2F(comsumeLog.getPayAmount()); // 单位分
+				String productName = "test";
+				//调用全付通统一下单
+
+				String ip = IPUtil.getIp(request);
+				String body = "测试商品";
+
+			    Map<String,String> resultMap = GateWayService.pay(ip,Integer.parseInt(total),body,orderId,code);
+				LogUtils.logInfo("请求结果1"+resultMap);
+				if("0".equals(resultMap.get("status"))){
+					//初始化支付信息成功响应数据给客户端
+					jsonModel.setSuccess(true);
+					resultMap.put("orderId",orderId);
+					jsonModel.setData(resultMap);
+				}else{
+					jsonModel.setSuccess(false);
+				}
+			} else if ("alipay".equals(payType)) {
+				//TODO 支付宝支付
+			} else {
+				LogUtils.logError("支付失败,参数payType[{}]错误",payType);
+				response.sendRedirect("http://www.ywzninfo.net/wapApp/errors?msg=调用支付参数错误");
+			}
+		} else {
+			LogUtils.logWarn("支付失败,查不找到订单[{}]平台信息",orderId);
+			response.sendRedirect("http://www.ywzninfo.net/wapApp/errors?msg=无效订单,请联系管理员");
+		}
+		LogUtils.logInfo("请求结果2"+jsonModel.getData());
+		return jsonModel;
+	}
+}

@@ -1,0 +1,187 @@
+package com.haiyi.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.maizi.utils.DateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.haiyi.controller.base.BaseController;
+import com.haiyi.domain.Agent;
+import com.haiyi.domain.Dev;
+import com.haiyi.domain.DictVal;
+import com.haiyi.query.AgentQuery;
+import com.haiyi.query.DevQuery;
+import com.haiyi.service.AgentService;
+import com.haiyi.service.DevService;
+import com.haiyi.service.DictService;
+import com.haiyi.utils.AgentUtil;
+import com.haiyi.utils.DictUtil;
+import com.haiyi.utils.ErrorTemplate;
+import com.haiyi.utils.RequestUtil;
+import com.haiyi.utils.StatusConstant;
+import com.maizi.anno.AuthAnno;
+import com.maizi.anno.ControllerAnno;
+import com.maizi.exception.ExceptionKind;
+import com.maizi.exception.KPException;
+import com.maizi.utils.JsonModel;
+import com.maizi.utils.LogUtils;
+
+@Controller
+@RequestMapping("/devs")
+@ControllerAnno(addUI = "/devs/save", detailUI = "/devs/detail", editUI = "/devs/save", listUI = "/devs/list")
+public class DevController extends BaseController<Dev,DevQuery>{
+	
+	@Autowired
+	DictService dictService;
+	
+	@Autowired
+	AgentService agentService;
+	
+	@Autowired
+	public void setDevService(DevService devService) {
+		this.baseService = devService;
+	}
+	
+	@Override
+	@AuthAnno
+	public Map<String, Object> list(DevQuery e, HttpServletRequest request) throws KPException {
+		e.setAgentId(AgentUtil.getAgentId(request.getSession()));
+		return super.list(e, request);
+	}
+
+	@Override
+	public Dev beforeSave(ModelMap modelMap, Dev t) throws KPException {
+		t.setAgentId(AgentUtil.getAgentId(RequestUtil.getRequest().getSession()));
+		if(t.getId()==null){
+			t.setAgentName(AgentUtil.getAgentName(RequestUtil.getRequest().getSession()));
+		}
+		return t;
+	}
+
+	@Override
+	public void beforeSaveUI(ModelMap modelMap, String id) throws KPException {
+		List<DictVal> dictVals = DictUtil.getDictValListByType(4);
+		modelMap.addAttribute("dictVals",dictVals);
+		
+		List<DictVal> payTypes = DictUtil.getDictValListByType(5);
+		modelMap.addAttribute("payTypes",payTypes);
+		
+		List<DictVal> tradeWays = DictUtil.getDictValListByType(13);
+		modelMap.addAttribute("tradeWays",tradeWays);
+		
+		List<DictVal> tfType = DictUtil.getDictValListByType(3);
+		modelMap.addAttribute("tfType",tfType);
+	}
+
+	@Override
+	protected void beforeDelete(String[] ids) throws KPException {
+	}
+	
+	
+	/**
+	 * 删除
+	 * @param ids
+	 * @return
+	 */
+	@Override
+	@RequestMapping(value={"/{ids}"}, method={RequestMethod.DELETE},headers="X-Requested-With=XMLHttpRequest")
+	@AuthAnno(token="delete")
+	public @ResponseBody JsonModel delete(@PathVariable("ids") String ids){
+		JsonModel jsonModel = new JsonModel();
+		try {
+			String id[] = ids.split(",");
+			beforeDelete(id);
+			int result;
+			if (id.length > 1) {
+				// 批量删除
+				result = ((DevService)this.baseService).deleteByIds(AgentUtil.getAgentId(RequestUtil.getRequest().getSession()), id);
+			} else {
+				//单个删除
+				result = ((DevService)this.baseService).deleteById(AgentUtil.getAgentId(RequestUtil.getRequest().getSession()),ids);
+			}
+			if(result==0){
+				jsonModel.setSuccess(false);
+				jsonModel.setMsg("删除失败");
+			}else{
+				jsonModel.setSuccess(true);
+				jsonModel.setMsg("成功删除" + result + "条记录");
+			}
+		} catch (Exception e) {
+			LogUtils.logError(e.toString());
+			jsonModel.setSuccess(false);
+			jsonModel.setMsg("删除" + msg + "失败,请重新刷新数据再删除");
+		}
+		return jsonModel;
+	}
+
+	/**
+	 *修改设备状态
+	 * @param productId
+	 * @param sign
+	 * @return
+	 */
+	@RequestMapping(value={"/{devId}/status"}, method={RequestMethod.PUT},headers="X-Requested-With=XMLHttpRequest")
+	@AuthAnno
+	public @ResponseBody JsonModel updateStatus(@PathVariable("devId") Integer devId,@RequestParam(required=true) String sign){
+		JsonModel jsonModel = new JsonModel();
+		if("y".equals(sign)){
+			jsonModel.setSuccess(((DevService)this.baseService).onLine(devId,AgentUtil.getAgentId(RequestUtil.getRequest().getSession())));
+			jsonModel.setMsg("开启成功");
+		}else if("n".equals(sign)){
+			jsonModel.setSuccess(((DevService)this.baseService).offLine(devId,AgentUtil.getAgentId(RequestUtil.getRequest().getSession())));
+			jsonModel.setMsg("停用成功");
+		}
+		return jsonModel;
+	}
+
+	/**
+	 * 更新设备状态是否启用接口
+	 * @param devId
+	 * @param token
+	 * @return
+	 */
+	@RequestMapping(value={"/{devId}/live"}, method={RequestMethod.PUT},headers="X-Requested-With=XMLHttpRequest")
+	@AuthAnno
+	public @ResponseBody JsonModel live(@PathVariable Integer devId,@RequestParam(required=true) String sign){
+		JsonModel jsonModel = new JsonModel();
+		if("y".equals(sign)){
+			jsonModel.setSuccess(((DevService)this.baseService).onLive(devId,AgentUtil.getAgentId(RequestUtil.getRequest().getSession())));
+			jsonModel.setMsg("在线成功");
+		}else if("n".equals(sign)){
+			jsonModel.setSuccess(((DevService)this.baseService).offLive(devId,AgentUtil.getAgentId(RequestUtil.getRequest().getSession())));
+			jsonModel.setMsg("离线成功");
+		}
+		return jsonModel;
+	}
+
+	/**
+	 * 转发到设备的统计状态界面
+	 * @return
+	 */
+	@RequestMapping(value={"/panel/status"},method={RequestMethod.GET})
+	@AuthAnno(verifyToken=false)
+	public String devPanel(){
+		return "devs/status";
+	}
+
+	/**
+	 * 获取设备的统计状态
+	 * @return
+	 */
+	@RequestMapping(value={"/{devId}/status"}, method={RequestMethod.GET},headers="X-Requested-With=XMLHttpRequest")
+	@AuthAnno(verifyToken=false)
+	public @ResponseBody JsonModel status(){
+		JsonModel jsonModel = new JsonModel();
+		return jsonModel;
+	}
+}

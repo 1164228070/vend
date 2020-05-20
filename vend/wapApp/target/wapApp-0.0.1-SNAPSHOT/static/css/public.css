@@ -1,0 +1,84 @@
+@charset "UTF-8";
+/**
+*
+* 移动端公用基础样式
+*
+*/
+
+ 
+body { font-family: 'Microsoft Yahei'; }
+
+a { color: #333; }
+a:visited { color: #333; }
+a:hover { color: #ff6e3b; }
+
+/* ---------------------------- 公用组件类 ------------------------- */
+.icos-sprite, .i-radio.checked { background-image: url('../images/icos-sdaf00e6def.png'); background-repeat: no-repeat; }
+
+.icos2-sprite { background-image: url('../images/icos2-s346d02eb21.png'); background-repeat: no-repeat; }
+
+.icos3-sprite { background-image: url('../images/icos3-se522a74f87.png'); background-repeat: no-repeat; }
+
+.icos4-sprite { background-image: url('../images/icos4-s68cde2f259.png'); background-repeat: no-repeat; }
+
+.icos5-sprite { background-image: url('../images/icos5-sea2b3c57d9.png'); background-repeat: no-repeat; }
+
+.icos6-sprite { background-image: url('../images/icos6-se79c4339fc.png'); background-repeat: no-repeat; }
+
+.lv-sprite { background-image: url('../images/lv-s1d40be64d6.png'); background-repeat: no-repeat; }
+
+.lv2-sprite { background-image: url('../images/lv2-sbd7da9d79a.png'); background-repeat: no-repeat; }
+
+
+.f18 { font-size: 1.286rem; }
+
+.f16 { font-size: 1.143857rem; }
+
+.f14 { font-size: 1rem; }
+
+.f12 { font-size: 0.857143rem; }
+
+.lh-22 { line-height: 1.57143rem; }
+
+.bwrd { word-break: break-all; }
+
+.columns { margin-left: -10px; margin-right: -10px; }
+
+.column { float: left; padding-right: 10px; padding-left: 10px; }
+
+
+input[type="text"], input[type="time"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="url"] { min-height: 34px; padding: 6px 10px; font-size: 1.143857rem; border: 0; }
+
+.i-radio { display: inline-block; vertical-align: middle; width: 20px; height: 20px; border: 1px solid #ccc; border-radius: 50%; }
+.i-radio.checked { background-size: 34px; background-position: 0 -515px; border-color: transparent; }
+
+.btn-switch { position: relative; display: inline-block; width: 67px; height: 26px; padding-left: 5px; padding-right: 5px; line-height: 20px; border: 1px solid #e5e5e5; background-color: #fdfdfd; box-shadow: #dfdfdf 0 0 0 0 inset; border-radius: 20px; -webkit-appearance: none; user-select: none; outline: none; cursor: pointer; text-align: right; color: #999; transition: all ease 0.5s; }
+.btn-switch:before { content: ''; width: 31px; height: 31px; position: absolute; top: -4px; left: 0; border-radius: 20px; background-color: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); transition: left 0.4s; }
+.btn-switch.checked { text-align: left; color: #fff; background-color: #ff6e3b; }
+.btn-switch.checked:before { left: 37px; }
+
+.counter { display: inline-block; padding: 2px 5px; font-size: 12px; font-weight: bold; line-height: 1; color: #fff; background-color: #e64614; border-radius: 20px; }
+
+
+
+
+
+
+
+  
+  
+/* 动画 */
+.animated { -webkit-animation-duration: 1s; animation-duration: 1s; -webkit-animation-fill-mode: both; animation-fill-mode: both; }
+
+.animated.infinite { -webkit-animation-iteration-count: infinite; animation-iteration-count: infinite; }
+
+/* 地址选择插件 */
+.mbsc-mobiscroll .dw .dwwr { background-color: #fff; }
+
+.mbsc-mobiscroll .dw .dwwol { border-color: #ddd; }
+
+.mbsc-mobiscroll .dw .dw-li { font-size: 1rem; }
+
+.mbsc-mobiscroll .dw .dwb { color: #ff6e3b; }
+
+/* ---------------------------- 公用组件类 ------------------------- */
