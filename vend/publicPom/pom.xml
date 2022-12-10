@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
   
     <properties>
-	    <spring.version>5.1.0.RELEASE</spring.version>
+	    <spring.version>6.0.0</spring.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <tomcat.version>2.2</tomcat.version>
         <hibernate.version>5.2.1.Final</hibernate.version>
